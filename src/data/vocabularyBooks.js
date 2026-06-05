@@ -1,419 +1,249 @@
 // 单词本数据
 import { grade4Vocabulary } from './grade4Vocabulary.js';
 
+// PET青少版全真模拟题核心词汇表
+export const petVocabulary = {
+  id: 'pet-teen',
+  name: 'PET青少版核心词汇',
+  description: 'PET青少版全真模拟题核心词汇',
+  category: 'exam',
+  color: '#f59e0b',
+  icon: '🎓',
+  units: [
+    {
+      id: 'test-1',
+      name: 'Test 1',
+      words: [
+        { id: 't1w1', english: 'normal', phonetic: '', chinese: '正常的', partOfSpeech: 'adj.', example: '' },
+        { id: 't1w2', english: 'further notice', phonetic: '', chinese: '进一步通知', partOfSpeech: 'n. phr.', example: '' },
+        { id: 't1w3', english: 'take place', phonetic: '', chinese: '发生', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't1w4', english: 'pay attention to', phonetic: '', chinese: '注意', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't1w5', english: 'single bed', phonetic: '', chinese: '单人床', partOfSpeech: 'n. phr.', example: '' },
+        { id: 't1w6', english: 'hire', phonetic: '', chinese: '雇佣；租用', partOfSpeech: 'v.', example: '' },
+        { id: 't1w7', english: 'grammar', phonetic: '', chinese: '语法', partOfSpeech: 'n.', example: '' },
+        { id: 't1w8', english: 'appear', phonetic: '', chinese: '出现；发生', partOfSpeech: 'v.', example: '' },
+        { id: 't1w9', english: 'series of', phonetic: '', chinese: '一系列', partOfSpeech: 'n. phr.', example: '' },
+        { id: 't1w10', english: 'aim at', phonetic: '', chinese: '旨在；瞄准', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't1w11', english: 'advanced', phonetic: '', chinese: '先进的；高级的', partOfSpeech: 'adj.', example: '' },
+        { id: 't1w12', english: 'explanation', phonetic: '', chinese: '解释', partOfSpeech: 'n.', example: '' },
+        { id: 't1w13', english: 'gallery', phonetic: '', chinese: '艺术馆；画廊', partOfSpeech: 'n.', example: '' },
+        { id: 't1w14', english: 'review', phonetic: '', chinese: '评论；复习', partOfSpeech: 'n./v.', example: '' },
+        { id: 't1w15', english: 'expert', phonetic: '', chinese: '专家', partOfSpeech: 'n.', example: '' },
+        { id: 't1w16', english: 'access to', phonetic: '', chinese: '进入；使用权', partOfSpeech: 'n. phr.', example: '' },
+        { id: 't1w17', english: 'fascinating', phonetic: '', chinese: '迷人的', partOfSpeech: 'adj.', example: '' },
+        { id: 't1w18', english: 'predict', phonetic: '', chinese: '预测', partOfSpeech: 'v.', example: '' },
+        { id: 't1w19', english: 'develop', phonetic: '', chinese: '发展；培养', partOfSpeech: 'v.', example: '' },
+        { id: 't1w20', english: 'addition', phonetic: '', chinese: '附加物；增加', partOfSpeech: 'n.', example: '' },
+        { id: 't1w21', english: 'tune', phonetic: '', chinese: '曲调', partOfSpeech: 'n.', example: '' },
+        { id: 't1w22', english: 'go abroad', phonetic: '', chinese: '去国外', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't1w23', english: 'accommodation', phonetic: '', chinese: '住宿', partOfSpeech: 'n.', example: '' },
+        { id: 't1w24', english: 'research', phonetic: '', chinese: '研究', partOfSpeech: 'n./v.', example: '' },
+        { id: 't1w25', english: 'increase', phonetic: '', chinese: '增长；增加', partOfSpeech: 'v./n.', example: '' },
+        { id: 't1w26', english: 'suffer', phonetic: '', chinese: '遭受；受苦', partOfSpeech: 'v.', example: '' },
+        { id: 't1w27', english: 'claim', phonetic: '', chinese: '声称；声明', partOfSpeech: 'v.', example: '' },
+        { id: 't1w28', english: 'mental', phonetic: '', chinese: '心理的；精神的', partOfSpeech: 'adj.', example: '' },
+        { id: 't1w29', english: 'require', phonetic: '', chinese: '要求；需要', partOfSpeech: 'v.', example: '' },
+        { id: 't1w30', english: 'a lack of', phonetic: '', chinese: '缺乏', partOfSpeech: 'n. phr.', example: '' },
+        { id: 't1w31', english: 'due to', phonetic: '', chinese: '由于', partOfSpeech: 'prep. phr.', example: '' },
+        { id: 't1w32', english: 'focus on', phonetic: '', chinese: '专注于', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't1w33', english: 'struggling', phonetic: '', chinese: '奋力拼搏；挣扎', partOfSpeech: 'v-ing/adj.', example: '' },
+        { id: 't1w34', english: 'depressed', phonetic: '', chinese: '沮丧的；抑郁的', partOfSpeech: 'adj.', example: '' },
+        { id: 't1w35', english: 'elsewhere', phonetic: '', chinese: '别处', partOfSpeech: 'adv.', example: '' },
+        { id: 't1w36', english: 'encourage', phonetic: '', chinese: '鼓励', partOfSpeech: 'v.', example: '' },
+        { id: 't1w37', english: 'manage', phonetic: '', chinese: '处理；管理', partOfSpeech: 'v.', example: '' },
+        { id: 't1w38', english: 'result in', phonetic: '', chinese: '导致', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't1w39', english: 'have an effect on', phonetic: '', chinese: '对...有影响', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't1w40', english: 'article', phonetic: '', chinese: '文章', partOfSpeech: 'n.', example: '' },
+        { id: 't1w41', english: 'the latest', phonetic: '', chinese: '最新的', partOfSpeech: 'adj. phr.', example: '' },
+        { id: 't1w42', english: 'take up', phonetic: '', chinese: '开始从事；占据', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't1w43', english: 'physical exercise', phonetic: '', chinese: '身体锻炼', partOfSpeech: 'n. phr.', example: '' },
+        { id: 't1w44', english: 'recently', phonetic: '', chinese: '最近地', partOfSpeech: 'adv.', example: '' },
+        { id: 't1w45', english: 'researcher', phonetic: '', chinese: '研究者', partOfSpeech: 'n.', example: '' },
+        { id: 't1w46', english: 'lack of facilities', phonetic: '', chinese: '缺乏设施', partOfSpeech: 'n. phr.', example: '' },
+        { id: 't1w47', english: 'deal with', phonetic: '', chinese: '处理；应付', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't1w48', english: 'have the chance to', phonetic: '', chinese: '有机会做', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't1w49', english: 'cover', phonetic: '', chinese: '覆盖；报道', partOfSpeech: 'v.', example: '' },
+        { id: 't1w50', english: 'leggings', phonetic: '', chinese: '紧身裤', partOfSpeech: 'n.', example: '' },
+        { id: 't1w51', english: 'issue', phonetic: '', chinese: '问题；事件', partOfSpeech: 'n.', example: '' },
+        { id: 't1w52', english: 'interview', phonetic: '', chinese: '采访；面试', partOfSpeech: 'n./v.', example: '' },
+        { id: 't1w53', english: 'private space', phonetic: '', chinese: '私人空间', partOfSpeech: 'n. phr.', example: '' },
+        { id: 't1w54', english: 'supply', phonetic: '', chinese: '供应', partOfSpeech: 'n./v.', example: '' },
+        { id: 't1w55', english: 'plug in', phonetic: '', chinese: '插上（电源）', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't1w56', english: 'a great deal of', phonetic: '', chinese: '大量的', partOfSpeech: 'adj. phr.', example: '' },
+        { id: 't1w57', english: 'seriously', phonetic: '', chinese: '认真地；严肃地', partOfSpeech: 'adv.', example: '' },
+        { id: 't1w58', english: 'take mind of', phonetic: '', chinese: '暂时忘记；留心', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't1w59', english: 'value', phonetic: '', chinese: '价值', partOfSpeech: 'n./v.', example: '' },
+        { id: 't1w60', english: 'achieve success', phonetic: '', chinese: '获得成功', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't1w61', english: 'material', phonetic: '', chinese: '材料', partOfSpeech: 'n.', example: '' },
+        { id: 't1w62', english: 'avoid', phonetic: '', chinese: '避免', partOfSpeech: 'v.', example: '' },
+        { id: 't1w63', english: 'request', phonetic: '', chinese: '请求；要求', partOfSpeech: 'n./v.', example: '' },
+        { id: 't1w64', english: 'consist of', phonetic: '', chinese: '由...组成', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't1w65', english: 'distance', phonetic: '', chinese: '距离', partOfSpeech: 'n.', example: '' },
+        { id: 't1w66', english: 'throughout', phonetic: '', chinese: '遍及；贯穿', partOfSpeech: 'prep./adv.', example: '' },
+        { id: 't1w67', english: 'narrow', phonetic: '', chinese: '狭窄的', partOfSpeech: 'adj.', example: '' },
+        { id: 't1w68', english: 'brief', phonetic: '', chinese: '简短的', partOfSpeech: 'adj.', example: '' },
+        { id: 't1w69', english: 'period', phonetic: '', chinese: '时期；一段时间', partOfSpeech: 'n.', example: '' },
+        { id: 't1w70', english: 'deaf', phonetic: '', chinese: '耳聋的', partOfSpeech: 'adj.', example: '' },
+        { id: 't1w71', english: 'basic', phonetic: '', chinese: '基础的；基本的', partOfSpeech: 'adj.', example: '' },
+        { id: 't1w72', english: 'prove', phonetic: '', chinese: '证明', partOfSpeech: 'v.', example: '' },
+        { id: 't1w73', english: 'worth', phonetic: '', chinese: '值得', partOfSpeech: 'adj./prep.', example: '' },
+        { id: 't1w74', english: 'historic site', phonetic: '', chinese: '历史景点', partOfSpeech: 'n. phr.', example: '' },
+        { id: 't1w75', english: 'further', phonetic: '', chinese: '更进一步的', partOfSpeech: 'adj./adv.', example: '' },
+        { id: 't1w76', english: 'normally', phonetic: '', chinese: '正常地', partOfSpeech: 'adv.', example: '' },
+        { id: 't1w77', english: 'performance', phonetic: '', chinese: '表演；表现', partOfSpeech: 'n.', example: '' },
+        { id: 't1w78', english: 'concentrate', phonetic: '', chinese: '集中；专心', partOfSpeech: 'v.', example: '' },
+        { id: 't1w79', english: 'graphic', phonetic: '', chinese: '图表；图形的', partOfSpeech: 'n./adj.', example: '' },
+        { id: 't1w80', english: 'novel', phonetic: '', chinese: '小说', partOfSpeech: 'n.', example: '' },
+        { id: 't1w81', english: 'inform', phonetic: '', chinese: '通知；告知', partOfSpeech: 'v.', example: '' },
+        { id: 't1w82', english: 'shampoo', phonetic: '', chinese: '洗发水；沐浴露', partOfSpeech: 'n.', example: '' },
+        { id: 't1w83', english: 'technology', phonetic: '', chinese: '技术', partOfSpeech: 'n.', example: '' },
+        { id: 't1w84', english: 'customer', phonetic: '', chinese: '顾客', partOfSpeech: 'n.', example: '' },
+        { id: 't1w85', english: 'fantastic', phonetic: '', chinese: '极好的', partOfSpeech: 'adj.', example: '' },
+        { id: 't1w86', english: 'confident', phonetic: '', chinese: '自信的', partOfSpeech: 'adj.', example: '' },
+        { id: 't1w87', english: 'salary', phonetic: '', chinese: '薪水', partOfSpeech: 'n.', example: '' },
+        { id: 't1w88', english: 'request a pay rise', phonetic: '', chinese: '要求加薪', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't1w89', english: 'employer', phonetic: '', chinese: '雇主', partOfSpeech: 'n.', example: '' },
+        { id: 't1w90', english: 'qualification', phonetic: '', chinese: '资格证；资格', partOfSpeech: 'n.', example: '' },
+        { id: 't1w91', english: 'in addition to', phonetic: '', chinese: '除...之外', partOfSpeech: 'prep. phr.', example: '' },
+        { id: 't1w92', english: 'continue', phonetic: '', chinese: '继续', partOfSpeech: 'v.', example: '' },
+        { id: 't1w93', english: 'advice', phonetic: '', chinese: '建议', partOfSpeech: 'n.', example: '' },
+      ]
+    },
+    {
+      id: 'test-2',
+      name: 'Test 2',
+      words: [
+        { id: 't2w1', english: 'arrange', phonetic: '', chinese: '安排', partOfSpeech: 'v.', example: '' },
+        { id: 't2w2', english: 'spare', phonetic: '', chinese: '额外的；多余的', partOfSpeech: 'adj.', example: '' },
+        { id: 't2w3', english: 'keen', phonetic: '', chinese: '狂热的；渴望的', partOfSpeech: 'adj.', example: '' },
+        { id: 't2w4', english: 'professional', phonetic: '', chinese: '专业的', partOfSpeech: 'adj.', example: '' },
+        { id: 't2w5', english: 'except', phonetic: '', chinese: '除了', partOfSpeech: 'prep.', example: '' },
+        { id: 't2w6', english: 'strength', phonetic: '', chinese: '强度；力量', partOfSpeech: 'n.', example: '' },
+        { id: 't2w7', english: 'organize', phonetic: '', chinese: '组织', partOfSpeech: 'v.', example: '' },
+        { id: 't2w8', english: 'leisure', phonetic: '', chinese: '休闲的', partOfSpeech: 'adj./n.', example: '' },
+        { id: 't2w9', english: 'design', phonetic: '', chinese: '设计', partOfSpeech: 'n./v.', example: '' },
+        { id: 't2w10', english: 'suitable', phonetic: '', chinese: '适合的', partOfSpeech: 'adj.', example: '' },
+        { id: 't2w11', english: 'host', phonetic: '', chinese: '承办；主持', partOfSpeech: 'v./n.', example: '' },
+        { id: 't2w12', english: 'event', phonetic: '', chinese: '事件；活动', partOfSpeech: 'n.', example: '' },
+        { id: 't2w13', english: 'pleased', phonetic: '', chinese: '开心的；满意的', partOfSpeech: 'adj.', example: '' },
+        { id: 't2w14', english: 'announce', phonetic: '', chinese: '公布；宣布', partOfSpeech: 'v.', example: '' },
+        { id: 't2w15', english: 'support', phonetic: '', chinese: '支持', partOfSpeech: 'v./n.', example: '' },
+        { id: 't2w16', english: 'qualified', phonetic: '', chinese: '有资格的', partOfSpeech: 'adj.', example: '' },
+        { id: 't2w17', english: 'session', phonetic: '', chinese: '课程；一段时间', partOfSpeech: 'n.', example: '' },
+        { id: 't2w18', english: 'guarantee', phonetic: '', chinese: '保证', partOfSpeech: 'v./n.', example: '' },
+        { id: 't2w19', english: 'definitely', phonetic: '', chinese: '肯定地；当然', partOfSpeech: 'adv.', example: '' },
+        { id: 't2w20', english: 'exist', phonetic: '', chinese: '存在', partOfSpeech: 'v.', example: '' },
+        { id: 't2w21', english: 'creature', phonetic: '', chinese: '生物', partOfSpeech: 'n.', example: '' },
+        { id: 't2w22', english: 'despite', phonetic: '', chinese: '尽管', partOfSpeech: 'prep.', example: '' },
+        { id: 't2w23', english: 'present', phonetic: '', chinese: '出席；现在的', partOfSpeech: 'adj./v.', example: '' },
+        { id: 't2w24', english: 'compete with', phonetic: '', chinese: '与...竞争', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't2w25', english: 'advantage', phonetic: '', chinese: '优点；优势', partOfSpeech: 'n.', example: '' },
+        { id: 't2w26', english: 'reach', phonetic: '', chinese: '到达；达到', partOfSpeech: 'v.', example: '' },
+        { id: 't2w27', english: 'acacia', phonetic: '', chinese: '相思树', partOfSpeech: 'n.', example: '' },
+        { id: 't2w28', english: 'suffer from', phonetic: '', chinese: '遭受（痛苦等）', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't2w29', english: 'obtain', phonetic: '', chinese: '得到；获得', partOfSpeech: 'v.', example: '' },
+        { id: 't2w30', english: 'a good amount of', phonetic: '', chinese: '大量的', partOfSpeech: 'adj. phr.', example: '' },
+        { id: 't2w31', english: 'disappear', phonetic: '', chinese: '消失', partOfSpeech: 'v.', example: '' },
+        { id: 't2w32', english: 'limited', phonetic: '', chinese: '有限的', partOfSpeech: 'adj.', example: '' },
+        { id: 't2w33', english: 'fuel', phonetic: '', chinese: '燃料', partOfSpeech: 'n.', example: '' },
+        { id: 't2w34', english: 'position', phonetic: '', chinese: '地位；位置', partOfSpeech: 'n.', example: '' },
+        { id: 't2w35', english: 'cause problem', phonetic: '', chinese: '导致问题', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't2w36', english: 'creative', phonetic: '', chinese: '有创造力的', partOfSpeech: 'adj.', example: '' },
+        { id: 't2w37', english: 'tend to', phonetic: '', chinese: '倾向于；往往会', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't2w38', english: 'rely on', phonetic: '', chinese: '依赖于', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't2w39', english: 'trick', phonetic: '', chinese: '技巧；把戏', partOfSpeech: 'n.', example: '' },
+        { id: 't2w40', english: 'simply', phonetic: '', chinese: '简单地；仅仅', partOfSpeech: 'adv.', example: '' },
+        { id: 't2w41', english: 'a bunch of', phonetic: '', chinese: '一捆；一群', partOfSpeech: 'n. phr.', example: '' },
+        { id: 't2w42', english: 'hang from', phonetic: '', chinese: '悬挂于', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't2w43', english: 'historical event', phonetic: '', chinese: '历史事件', partOfSpeech: 'n. phr.', example: '' },
+        { id: 't2w44', english: 'scene', phonetic: '', chinese: '场景；景色', partOfSpeech: 'n.', example: '' },
+        { id: 't2w45', english: 'familiar', phonetic: '', chinese: '熟悉的', partOfSpeech: 'adj.', example: '' },
+        { id: 't2w46', english: 'method', phonetic: '', chinese: '方法；措施', partOfSpeech: 'n.', example: '' },
+        { id: 't2w47', english: 'be known as', phonetic: '', chinese: '以...而闻名', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't2w48', english: 'fairy', phonetic: '', chinese: '仙女', partOfSpeech: 'n.', example: '' },
+        { id: 't2w49', english: 'enamel', phonetic: '', chinese: '牙釉质', partOfSpeech: 'n.', example: '' },
+        { id: 't2w50', english: 'damage', phonetic: '', chinese: '破坏；损害', partOfSpeech: 'n./v.', example: '' },
+        { id: 't2w51', english: 'serious', phonetic: '', chinese: '严肃的；严重的', partOfSpeech: 'adj.', example: '' },
+        { id: 't2w52', english: 'gum', phonetic: '', chinese: '牙龈；口香糖', partOfSpeech: 'n.', example: '' },
+        { id: 't2w53', english: 'deliver', phonetic: '', chinese: '递送；发表', partOfSpeech: 'v.', example: '' },
+        { id: 't2w54', english: 'compare', phonetic: '', chinese: '对比；比较', partOfSpeech: 'v.', example: '' },
+        { id: 't2w55', english: 'permanent', phonetic: '', chinese: '永恒的；永久的', partOfSpeech: 'adj.', example: '' },
+        { id: 't2w56', english: 'in order to', phonetic: '', chinese: '为了', partOfSpeech: 'prep. phr.', example: '' },
+        { id: 't2w57', english: 'injury', phonetic: '', chinese: '伤害；受伤', partOfSpeech: 'n.', example: '' },
+        { id: 't2w58', english: 'speed', phonetic: '', chinese: '速度', partOfSpeech: 'n.', example: '' },
+        { id: 't2w59', english: 'congratulations', phonetic: '', chinese: '恭喜；祝贺', partOfSpeech: 'n.', example: '' },
+        { id: 't2w60', english: 'appointment', phonetic: '', chinese: '预约；任命', partOfSpeech: 'n.', example: '' },
+        { id: 't2w61', english: 'cancel', phonetic: '', chinese: '取消', partOfSpeech: 'v.', example: '' },
+        { id: 't2w62', english: 'spices', phonetic: '', chinese: '香料', partOfSpeech: 'n.', example: '' },
+        { id: 't2w63', english: 'connect to', phonetic: '', chinese: '连接到', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't2w64', english: 'switch on', phonetic: '', chinese: '打开（电器）', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't2w65', english: 'fault', phonetic: '', chinese: '错误；故障', partOfSpeech: 'n.', example: '' },
+        { id: 't2w66', english: 'battery', phonetic: '', chinese: '电池', partOfSpeech: 'n.', example: '' },
+        { id: 't2w67', english: 'aboard', phonetic: '', chinese: '在船/飞机/车上', partOfSpeech: 'adv./prep.', example: '' },
+        { id: 't2w68', english: 'vegetarian', phonetic: '', chinese: '素食主义者', partOfSpeech: 'n.', example: '' },
+        { id: 't2w69', english: 'celebration', phonetic: '', chinese: '庆祝；庆典', partOfSpeech: 'n.', example: '' },
+        { id: 't2w70', english: 'provide', phonetic: '', chinese: '提供', partOfSpeech: 'v.', example: '' },
+      ]
+    },
+    {
+      id: 'test-3',
+      name: 'Test 3',
+      words: [
+        { id: 't3w1', english: 'maximum', phonetic: '', chinese: '最大值；最大的', partOfSpeech: 'n./adj.', example: '' },
+        { id: 't3w2', english: 'locker', phonetic: '', chinese: '储物柜；抽屉', partOfSpeech: 'n.', example: '' },
+        { id: 't3w3', english: 'hand in', phonetic: '', chinese: '上交', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't3w4', english: 'valuable', phonetic: '', chinese: '值钱的；宝贵的', partOfSpeech: 'adj.', example: '' },
+        { id: 't3w5', english: 'in a mess', phonetic: '', chinese: '凌乱；一团糟', partOfSpeech: 'phr.', example: '' },
+        { id: 't3w6', english: 'celebrate', phonetic: '', chinese: '庆祝', partOfSpeech: 'v.', example: '' },
+        { id: 't3w7', english: 'relatives', phonetic: '', chinese: '亲戚', partOfSpeech: 'n.', example: '' },
+        { id: 't3w8', english: 'takeaway', phonetic: '', chinese: '外卖；打包带走', partOfSpeech: 'n./adj.', example: '' },
+        { id: 't3w9', english: 'a range of', phonetic: '', chinese: '一系列的', partOfSpeech: 'phr.', example: '' },
+        { id: 't3w10', english: 'option', phonetic: '', chinese: '选择', partOfSpeech: 'n.', example: '' },
+        { id: 't3w11', english: 'occasion', phonetic: '', chinese: '场合；时机', partOfSpeech: 'n.', example: '' },
+        { id: 't3w12', english: 'anniversary', phonetic: '', chinese: '纪念日', partOfSpeech: 'n.', example: '' },
+        { id: 't3w13', english: 'feature', phonetic: '', chinese: '特征；主演', partOfSpeech: 'n./v.', example: '' },
+        { id: 't3w14', english: 'service', phonetic: '', chinese: '服务', partOfSpeech: 'n.', example: '' },
+        { id: 't3w15', english: 'quality', phonetic: '', chinese: '质量；品质', partOfSpeech: 'n.', example: '' },
+        { id: 't3w16', english: 'ingredient', phonetic: '', chinese: '成分；原料', partOfSpeech: 'n.', example: '' },
+        { id: 't3w17', english: 'location', phonetic: '', chinese: '位置；地点', partOfSpeech: 'n.', example: '' },
+        { id: 't3w18', english: 'fancy', phonetic: '', chinese: '喜欢；花哨的', partOfSpeech: 'v./adj.', example: '' },
+        { id: 't3w19', english: 'certain', phonetic: '', chinese: '确定的；一定的', partOfSpeech: 'adj.', example: '' },
+        { id: 't3w20', english: 'disappoint', phonetic: '', chinese: '使失望', partOfSpeech: 'v.', example: '' },
+        { id: 't3w21', english: 'be lack of', phonetic: '', chinese: '缺乏', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't3w22', english: 'organise', phonetic: '', chinese: '组织', partOfSpeech: 'v.', example: '' },
+        { id: 't3w23', english: 'well-known', phonetic: '', chinese: '出名的', partOfSpeech: 'adj.', example: '' },
+        { id: 't3w24', english: 'create', phonetic: '', chinese: '创造', partOfSpeech: 'v.', example: '' },
+        { id: 't3w25', english: 'corner', phonetic: '', chinese: '角落', partOfSpeech: 'n.', example: '' },
+        { id: 't3w26', english: 'disturb', phonetic: '', chinese: '打扰', partOfSpeech: 'v.', example: '' },
+        { id: 't3w27', english: 'apart from', phonetic: '', chinese: '除...之外', partOfSpeech: 'prep. phr.', example: '' },
+        { id: 't3w28', english: 'device', phonetic: '', chinese: '设备；装置', partOfSpeech: 'n.', example: '' },
+        { id: 't3w29', english: 'litter', phonetic: '', chinese: '垃圾；乱扔', partOfSpeech: 'n./v.', example: '' },
+        { id: 't3w30', english: 'environment', phonetic: '', chinese: '环境', partOfSpeech: 'n.', example: '' },
+        { id: 't3w31', english: 'award', phonetic: '', chinese: '奖品；奖项', partOfSpeech: 'n.', example: '' },
+        { id: 't3w32', english: 'environmental', phonetic: '', chinese: '环保的；环境的', partOfSpeech: 'adj.', example: '' },
+        { id: 't3w33', english: 'fit with', phonetic: '', chinese: '符合；适合', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't3w34', english: 'volunteer', phonetic: '', chinese: '志愿者', partOfSpeech: 'n.', example: '' },
+        { id: 't3w35', english: 'depend on', phonetic: '', chinese: '取决于；依赖', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't3w36', english: 'accompany', phonetic: '', chinese: '伴随；陪伴', partOfSpeech: 'v.', example: '' },
+        { id: 't3w37', english: 'opportunity', phonetic: '', chinese: '机会', partOfSpeech: 'n.', example: '' },
+        { id: 't3w38', english: 'acceptable', phonetic: '', chinese: '可接受的', partOfSpeech: 'adj.', example: '' },
+        { id: 't3w39', english: 'benefit', phonetic: '', chinese: '好处；利益', partOfSpeech: 'n./v.', example: '' },
+        { id: 't3w40', english: 'ancient', phonetic: '', chinese: '古代的', partOfSpeech: 'adj.', example: '' },
+        { id: 't3w41', english: 'custom', phonetic: '', chinese: '风俗；习惯', partOfSpeech: 'n.', example: '' },
+        { id: 't3w42', english: 'appear in', phonetic: '', chinese: '出现在', partOfSpeech: 'v. phr.', example: '' },
+        { id: 't3w43', english: 'commercial', phonetic: '', chinese: '商业的', partOfSpeech: 'adj.', example: '' },
+        { id: 't3w44', english: 'approve', phonetic: '', chinese: '批准；同意', partOfSpeech: 'v.', example: '' },
+        { id: 't3w45', english: 'date from', phonetic: '', chinese: '追溯到', partOfSpeech: 'v. phr.', example: '' },
+      ]
+    }
+  ]
+};
+
 export const vocabularyBooks = [
-  {
-    id: 'grade-3',
-    name: '三年级英语',
-    description: '小学三年级上册',
-    category: 'school',
-    color: '#3b82f6',
-    icon: '📚',
-    units: [
-      {
-        id: 'unit-1',
-        name: 'Unit 1 - Hello!',
-        words: [
-          {
-            id: 'w1',
-            english: 'hello',
-            phonetic: '/həˈləʊ/',
-            chinese: '你好',
-            example: 'Hello, how are you?'
-          },
-          {
-            id: 'w2',
-            english: 'goodbye',
-            phonetic: '/ˌɡʊdˈbaɪ/',
-            chinese: '再见',
-            example: 'Goodbye, see you tomorrow!'
-          },
-          {
-            id: 'w3',
-            english: 'morning',
-            phonetic: '/ˈmɔːnɪŋ/',
-            chinese: '早晨；上午',
-            example: 'Good morning, teacher!'
-          },
-          {
-            id: 'w4',
-            english: 'afternoon',
-            phonetic: '/ˌɑːftəˈnuːn/',
-            chinese: '下午',
-            example: 'Good afternoon, everyone!'
-          },
-          {
-            id: 'w5',
-            english: 'evening',
-            phonetic: '/ˈiːvnɪŋ/',
-            chinese: '傍晚；晚上',
-            example: 'Good evening, mom!'
-          },
-          {
-            id: 'w6',
-            english: 'night',
-            phonetic: '/naɪt/',
-            chinese: '夜晚',
-            example: 'Good night, dad!'
-          },
-          {
-            id: 'w7',
-            english: 'name',
-            phonetic: '/neɪm/',
-            chinese: '名字',
-            example: 'My name is Tom.'
-          },
-          {
-            id: 'w8',
-            english: 'friend',
-            phonetic: '/frend/',
-            chinese: '朋友',
-            example: 'She is my best friend.'
-          }
-        ]
-      },
-      {
-        id: 'unit-2',
-        name: 'Unit 2 - Colors',
-        words: [
-          {
-            id: 'w9',
-            english: 'red',
-            phonetic: '/red/',
-            chinese: '红色',
-            example: 'The apple is red.'
-          },
-          {
-            id: 'w10',
-            english: 'blue',
-            phonetic: '/bluː/',
-            chinese: '蓝色',
-            example: 'The sky is blue.'
-          },
-          {
-            id: 'w11',
-            english: 'green',
-            phonetic: '/ɡriːn/',
-            chinese: '绿色',
-            example: 'The grass is green.'
-          },
-          {
-            id: 'w12',
-            english: 'yellow',
-            phonetic: '/ˈjeləʊ/',
-            chinese: '黄色',
-            example: 'The banana is yellow.'
-          },
-          {
-            id: 'w13',
-            english: 'white',
-            phonetic: '/waɪt/',
-            chinese: '白色',
-            example: 'The snow is white.'
-          },
-          {
-            id: 'w14',
-            english: 'black',
-            phonetic: '/blæk/',
-            chinese: '黑色',
-            example: 'My cat is black.'
-          },
-          {
-            id: 'w15',
-            english: 'orange',
-            phonetic: '/ˈɒrɪndʒ/',
-            chinese: '橙色',
-            example: 'I like orange juice.'
-          }
-        ]
-      },
-      {
-        id: 'unit-3',
-        name: 'Unit 3 - Animals',
-        words: [
-          {
-            id: 'w16',
-            english: 'cat',
-            phonetic: '/kæt/',
-            chinese: '猫',
-            example: 'I have a cute cat.'
-          },
-          {
-            id: 'w17',
-            english: 'dog',
-            phonetic: '/dɒɡ/',
-            chinese: '狗',
-            example: 'The dog is running.'
-          },
-          {
-            id: 'w18',
-            english: 'bird',
-            phonetic: '/bɜːd/',
-            chinese: '鸟',
-            example: 'A bird can fly.'
-          },
-          {
-            id: 'w19',
-            english: 'fish',
-            phonetic: '/fɪʃ/',
-            chinese: '鱼',
-            example: 'The fish is swimming.'
-          },
-          {
-            id: 'w20',
-            english: 'rabbit',
-            phonetic: '/ˈræbɪt/',
-            chinese: '兔子',
-            example: 'The rabbit has long ears.'
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'grade-4',
-    name: '四年级英语',
-    description: '小学四年级上册',
-    category: 'school',
-    color: '#10b981',
-    icon: '📖',
-    units: [
-      {
-        id: 'unit-1',
-        name: 'Unit 1 - My School',
-        words: [
-          {
-            id: 'w1',
-            english: 'school',
-            phonetic: '/skuːl/',
-            chinese: '学校',
-            example: 'I go to school every day.'
-          },
-          {
-            id: 'w2',
-            english: 'classroom',
-            phonetic: '/ˈklɑːsruːm/',
-            chinese: '教室',
-            example: 'Our classroom is big.'
-          },
-          {
-            id: 'w3',
-            english: 'teacher',
-            phonetic: '/ˈtiːtʃə/',
-            chinese: '老师',
-            example: 'My teacher is kind.'
-          },
-          {
-            id: 'w4',
-            english: 'student',
-            phonetic: '/ˈstjuːdnt/',
-            chinese: '学生',
-            example: 'I am a student.'
-          },
-          {
-            id: 'w5',
-            english: 'book',
-            phonetic: '/bʊk/',
-            chinese: '书',
-            example: 'This is my book.'
-          },
-          {
-            id: 'w6',
-            english: 'desk',
-            phonetic: '/desk/',
-            chinese: '课桌',
-            example: 'My desk is clean.'
-          }
-        ]
-      },
-      {
-        id: 'unit-2',
-        name: 'Unit 2 - My Family',
-        words: [
-          {
-            id: 'w7',
-            english: 'family',
-            phonetic: '/ˈfæmɪli/',
-            chinese: '家庭',
-            example: 'I love my family.'
-          },
-          {
-            id: 'w8',
-            english: 'father',
-            phonetic: '/ˈfɑːðə/',
-            chinese: '父亲',
-            example: 'My father is tall.'
-          },
-          {
-            id: 'w9',
-            english: 'mother',
-            phonetic: '/ˈmʌðə/',
-            chinese: '母亲',
-            example: 'My mother cooks well.'
-          },
-          {
-            id: 'w10',
-            english: 'sister',
-            phonetic: '/ˈsɪstə/',
-            chinese: '姐妹',
-            example: 'I have a sister.'
-          },
-          {
-            id: 'w11',
-            english: 'brother',
-            phonetic: '/ˈbrʌðə/',
-            chinese: '兄弟',
-            example: 'My brother is young.'
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'ket-core',
-    name: 'KET核心词汇',
-    description: 'KET考试核心词汇',
-    category: 'exam',
-    color: '#f59e0b',
-    icon: '🎓',
-    units: [
-      {
-        id: 'unit-1',
-        name: 'Unit 1 - Daily Life',
-        words: [
-          {
-            id: 'w1',
-            english: 'breakfast',
-            phonetic: '/ˈbrekfəst/',
-            chinese: '早餐',
-            example: 'I have breakfast at 7 am.'
-          },
-          {
-            id: 'w2',
-            english: 'lunch',
-            phonetic: '/lʌntʃ/',
-            chinese: '午餐',
-            example: 'We have lunch at school.'
-          },
-          {
-            id: 'w3',
-            english: 'dinner',
-            phonetic: '/ˈdɪnə/',
-            chinese: '晚餐',
-            example: 'Dinner is ready!'
-          },
-          {
-            id: 'w4',
-            english: 'homework',
-            phonetic: '/ˈhəʊmwɜːk/',
-            chinese: '家庭作业',
-            example: 'I do my homework after school.'
-          },
-          {
-            id: 'w5',
-            english: 'hobby',
-            phonetic: '/ˈhɒbi/',
-            chinese: '爱好',
-            example: 'My hobby is reading.'
-          },
-          {
-            id: 'w6',
-            english: 'weekend',
-            phonetic: '/ˌwiːkˈend/',
-            chinese: '周末',
-            example: 'I play football on weekend.'
-          }
-        ]
-      },
-      {
-        id: 'unit-2',
-        name: 'Unit 2 - Places',
-        words: [
-          {
-            id: 'w7',
-            english: 'library',
-            phonetic: '/ˈlaɪbrəri/',
-            chinese: '图书馆',
-            example: 'I read books in the library.'
-          },
-          {
-            id: 'w8',
-            english: 'hospital',
-            phonetic: '/ˈhɒspɪtl/',
-            chinese: '医院',
-            example: 'My mom works in a hospital.'
-          },
-          {
-            id: 'w9',
-            english: 'station',
-            phonetic: '/ˈsteɪʃn/',
-            chinese: '车站',
-            example: 'The station is near my home.'
-          },
-          {
-            id: 'w10',
-            english: 'museum',
-            phonetic: '/mjuˈziːəm/',
-            chinese: '博物馆',
-            example: 'We visited the museum yesterday.'
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'pet-core',
-    name: 'PET核心词汇',
-    description: 'PET考试核心词汇',
-    category: 'exam',
-    color: '#ef4444',
-    icon: '🏆',
-    units: [
-      {
-        id: 'unit-1',
-        name: 'Unit 1 - Education',
-        words: [
-          {
-            id: 'w1',
-            english: 'education',
-            phonetic: '/ˌedʒuˈkeɪʃn/',
-            chinese: '教育',
-            example: 'Education is important.'
-          },
-          {
-            id: 'w2',
-            english: 'knowledge',
-            phonetic: '/ˈnɒlɪdʒ/',
-            chinese: '知识',
-            example: 'Knowledge is power.'
-          },
-          {
-            id: 'w3',
-            english: 'experience',
-            phonetic: '/ɪkˈspɪəriəns/',
-            chinese: '经验；经历',
-            example: 'I have experience in teaching.'
-          },
-          {
-            id: 'w4',
-            english: 'subject',
-            phonetic: '/ˈsʌbdʒɪkt/',
-            chinese: '科目；主题',
-            example: 'Math is my favorite subject.'
-          },
-          {
-            id: 'w5',
-            english: 'examination',
-            phonetic: '/ɪɡˌzæmɪˈneɪʃn/',
-            chinese: '考试',
-            example: 'The examination is next week.'
-          }
-        ]
-      }
-    ]
-  },
   // 四年级下册
-  grade4Vocabulary
+  grade4Vocabulary,
+  // PET青少版核心词汇
+  petVocabulary
 ];
 
 export default vocabularyBooks;
