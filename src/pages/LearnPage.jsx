@@ -11,6 +11,11 @@ const PHASES = {
   COMPLETE: 'complete'
 };
 
+const PRACTICE_MODES = {
+  SPELLING: 'spelling',  // 拼写模式（四年级下册）
+  CHOICE: 'choice'       // 选择题模式（其他单词本）
+};
+
 function LearnPage() {
   const { bookId, unitId } = useParams();
   const navigate = useNavigate();
@@ -32,6 +37,11 @@ function LearnPage() {
   const [isListening, setIsListening] = useState(false);
   const [practiceWords, setPracticeWords] = useState([]);
   const recognitionRef = useRef(null);
+
+  // 选择题练习相关状态
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [practiceOptions, setPracticeOptions] = useState([]);
+  const [practiceMode, setPracticeMode] = useState(PRACTICE_MODES.CHOICE);
 
   // 获取数据
   const book = vocabularyBooks.find(b => b.id === bookId);
@@ -57,8 +67,6 @@ function LearnPage() {
       audioService.speakWord(word.english).catch(() => {});
     }
   }, [phase, currentIndex, currentBatch]);
-
-  // 练习阶段 - 不自动播放发音，等用户拼写正确后再播放
 
   // 初始化语音识别
   useEffect(() => {
@@ -114,15 +122,36 @@ function LearnPage() {
     setSpellingInput('');
     setIsCorrect(null);
     setCorrectCount(0);
-  }, [learnedInBatch]);
+    setSelectedOption(null);
 
-  // 播放当前练习单词发音（拼写正确后调用）
-  const handlePracticeSpeak = async () => {
-    if (practiceWords.length > 0 && practiceIndex < practiceWords.length) {
-      const word = practiceWords[practiceIndex];
-      await audioService.speakWord(word.english);
+    // 根据单词本决定练习模式
+    if (bookId === 'grade-4-down') {
+      setPracticeMode(PRACTICE_MODES.SPELLING);
+    } else {
+      setPracticeMode(PRACTICE_MODES.CHOICE);
+      generatePracticeOptions(shuffled[0]);
     }
-  };
+  }, [learnedInBatch, bookId]);
+
+  // 生成选择题选项
+  const generatePracticeOptions = useCallback((currentWord) => {
+    if (!currentWord || !unit) return;
+    // 获取其他单词作为干扰项
+    const otherWords = unit.words.filter(w => w.id !== currentWord.id);
+    const shuffledOthers = otherWords.sort(() => Math.random() - 0.5).slice(0, 3);
+    const allOptions = [...shuffledOthers, currentWord].sort(() => Math.random() - 0.5);
+    setPracticeOptions(allOptions);
+  }, [unit]);
+
+  // 更新选择题选项（当练习索引变化时）
+  useEffect(() => {
+    if (phase === PHASES.PRACTICE && practiceMode === PRACTICE_MODES.CHOICE && practiceWords.length > 0) {
+      const currentWord = practiceWords[practiceIndex];
+      if (currentWord) {
+        generatePracticeOptions(currentWord);
+      }
+    }
+  }, [phase, practiceMode, practiceIndex, practiceWords, generatePracticeOptions]);
 
   // 开始语音输入
   const handleStartListening = () => {
@@ -132,30 +161,25 @@ function LearnPage() {
     }
   };
 
-  // 检查拼写
+  // 检查拼写（拼写模式）
   const handleCheckSpelling = async () => {
     if (!spellingInput.trim()) return;
 
     const currentWord = practiceWords[practiceIndex];
-    // 比较时忽略大小写和空格
     const isAnswerCorrect = spellingInput.toLowerCase().trim() === currentWord.english.toLowerCase().trim();
     setIsCorrect(isAnswerCorrect);
 
     if (isAnswerCorrect) {
       audioService.playCorrect();
       setCorrectCount(prev => prev + 1);
-      // 拼写正确后才播放单词发音
       await audioService.speakWord(currentWord.english);
 
-      // 等待一下让用户看到正确提示
       setTimeout(() => {
         if (practiceIndex < practiceWords.length - 1) {
-          // 继续下一个练习
           setPracticeIndex(practiceIndex + 1);
           setSpellingInput('');
           setIsCorrect(null);
         } else {
-          // 练习完成，播放欢呼声后进入测试
           audioService.speakEncouragement('correct').then(() => {
             setPhase(PHASES.TEST);
           });
@@ -163,13 +187,44 @@ function LearnPage() {
       }, 800);
     } else {
       audioService.playWrong();
-      // 记录错词
       addWrongWord(bookId, currentWord);
 
-      // 错误时抖动，然后重置让用户再试
       setTimeout(() => {
         setIsCorrect(null);
         setSpellingInput('');
+      }, 1500);
+    }
+  };
+
+  // 选择题模式 - 选择选项
+  const handleSelectOption = async (option) => {
+    const currentWord = practiceWords[practiceIndex];
+    const correct = option.id === currentWord.id;
+
+    setSelectedOption(option.id);
+    setIsCorrect(correct);
+
+    if (correct) {
+      audioService.playCorrect();
+
+      setTimeout(() => {
+        if (practiceIndex < practiceWords.length - 1) {
+          setPracticeIndex(practiceIndex + 1);
+          setSelectedOption(null);
+          setIsCorrect(null);
+        } else {
+          audioService.speakEncouragement('correct').then(() => {
+            setPhase(PHASES.TEST);
+          });
+        }
+      }, 800);
+    } else {
+      audioService.playWrong();
+      addWrongWord(bookId, currentWord);
+
+      setTimeout(() => {
+        setSelectedOption(null);
+        setIsCorrect(null);
       }, 1500);
     }
   };
@@ -193,7 +248,6 @@ function LearnPage() {
       }));
       setSelectedWord(null);
 
-      // 检查是否全部完成
       const completed = Object.keys(testConnections).length + 1 === practiceWords.length;
       setTestComplete(completed);
     } else {
@@ -206,7 +260,6 @@ function LearnPage() {
   const handleTestComplete = async () => {
     await audioService.speakEncouragement('correct');
 
-    // 检查是否有更多未学习的单词
     const remainingWords = unlearnedWords.slice(currentBatch.length);
     if (remainingWords.length > 0) {
       setPhase(PHASES.LEARNING);
@@ -217,6 +270,7 @@ function LearnPage() {
       setTestConnections({});
       setTestComplete(false);
       setCorrectCount(0);
+      setSelectedOption(null);
     } else {
       setPhase(PHASES.COMPLETE);
     }
@@ -315,8 +369,8 @@ function LearnPage() {
     );
   }
 
-  // 渲染练习阶段 - 单词拼写
-  if (phase === PHASES.PRACTICE && practiceWords.length > 0) {
+  // 渲染练习阶段 - 拼写模式（四年级下册）
+  if (phase === PHASES.PRACTICE && practiceMode === PRACTICE_MODES.SPELLING && practiceWords.length > 0) {
     const currentWord = practiceWords[practiceIndex];
 
     return (
@@ -419,6 +473,94 @@ function LearnPage() {
                 key={idx}
                 className={`w-3 h-3 rounded-full ${
                   idx < correctCount ? 'bg-green-300' :
+                  idx === practiceIndex ? 'bg-white' :
+                  'bg-white/40'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 渲染练习阶段 - 选择题模式（其他单词本）
+  if (phase === PHASES.PRACTICE && practiceMode === PRACTICE_MODES.CHOICE && practiceWords.length > 0) {
+    const currentWord = practiceWords[practiceIndex];
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-400 to-blue-500 p-4 flex flex-col">
+        {/* 头部 */}
+        <div className="flex items-center justify-between py-4">
+          <button onClick={handleBack} className="text-white text-xl">←</button>
+          <div className="text-white">
+            练习阶段 ({practiceIndex + 1}/{practiceWords.length})
+          </div>
+          <div className="text-white text-xl">🎯</div>
+        </div>
+
+        {/* 题目 */}
+        <div className="flex-1 flex flex-col items-center justify-center">
+          <div className="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-sm mb-6">
+            {/* 英文单词 */}
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <h2 className="text-3xl font-bold text-gray-800">
+                {currentWord?.english}
+              </h2>
+              <button
+                onClick={() => audioService.speakWord(currentWord?.english)}
+                className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center text-xl active:scale-90 transition-transform"
+              >
+                🔊
+              </button>
+            </div>
+
+            {/* 词性 */}
+            {currentWord?.partOfSpeech && (
+              <div className="text-center mb-4">
+                <span className="inline-block px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-sm font-medium">
+                  {currentWord.partOfSpeech}
+                </span>
+              </div>
+            )}
+
+            <p className="text-gray-500 text-center mb-6">选择正确的中文释义</p>
+
+            {/* 选项 */}
+            <div className="grid grid-cols-2 gap-3">
+              {practiceOptions.map(option => (
+                <button
+                  key={option.id}
+                  onClick={() => handleSelectOption(option)}
+                  disabled={selectedOption && selectedOption !== option.id}
+                  className={`py-4 px-6 rounded-2xl text-lg font-bold transition-all ${
+                    selectedOption === option.id
+                      ? isCorrect
+                        ? 'bg-green-500 text-white scale-105'
+                        : 'bg-red-500 text-white animate-wiggle'
+                      : 'bg-white text-gray-800 active:scale-95'
+                  } ${selectedOption && selectedOption !== option.id ? 'opacity-50' : ''}`}
+                >
+                  {option.chinese}
+                </button>
+              ))}
+            </div>
+
+            {/* 提示 */}
+            {isCorrect !== null && (
+              <div className={`mt-6 text-xl font-bold text-center ${isCorrect ? 'text-green-300' : 'text-red-300'}`}>
+                {isCorrect ? '✓ 正确！' : '✗ 再试一次！'}
+              </div>
+            )}
+          </div>
+
+          {/* 进度指示 */}
+          <div className="flex gap-2 mt-2">
+            {practiceWords.map((_, idx) => (
+              <div
+                key={idx}
+                className={`w-3 h-3 rounded-full ${
+                  idx < practiceIndex ? 'bg-green-300' :
                   idx === practiceIndex ? 'bg-white' :
                   'bg-white/40'
                 }`}
@@ -562,6 +704,7 @@ function LearnPage() {
                 setLearnedInBatch([]);
                 setPracticeWords([]);
                 setCorrectCount(0);
+                setSelectedOption(null);
               }}
               className="py-4 px-6 bg-green-500 text-white rounded-2xl text-xl font-bold active:scale-95 transition-transform"
             >
