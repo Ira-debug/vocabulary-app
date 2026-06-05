@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { ProgressProvider } from './context/ProgressContext';
 import HomePage from './pages/HomePage';
 import UnitListPage from './pages/UnitListPage';
