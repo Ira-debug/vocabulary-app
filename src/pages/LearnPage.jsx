@@ -794,7 +794,15 @@ function LearnPage() {
     );
   }
 
-  return null;
+  // 加载状态或默认状态
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-400 to-purple-500 p-4 flex flex-col items-center justify-center">
+      <div className="bg-white rounded-3xl shadow-2xl p-8 text-center">
+        <h2 className="text-4xl mb-4">📚</h2>
+        <p className="text-gray-600">正在加载...</p>
+      </div>
+    </div>
+  );
 }
 
 export default LearnPage;
