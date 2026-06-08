@@ -52,6 +52,25 @@ function LearnPage() {
   const book = vocabularyBooks.find(b => b.id === bookId);
   const unit = book?.units.find(u => u.id === unitId);
 
+  // 如果单词本或单元不存在，显示错误页面
+  if (!book || !unit) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-red-400 to-orange-500 p-4 flex flex-col items-center justify-center">
+        <div className="bg-white rounded-3xl shadow-2xl p-8 text-center">
+          <h2 className="text-4xl mb-4">❌</h2>
+          <h3 className="text-2xl font-bold text-gray-800 mb-2">页面不存在</h3>
+          <p className="text-gray-600 mb-6">找不到该单词本或单元</p>
+          <button
+            onClick={() => navigate('/')}
+            className="py-4 px-6 bg-blue-500 text-white rounded-2xl text-xl font-bold active:scale-95 transition-transform"
+          >
+            返回首页
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // 获取进度，找出未学习的单词
   const unitProgress = getUnitProgress(bookId, unitId, unit);
   const learnedWordIds = unitProgress.learnedWords || [];
