@@ -29,6 +29,8 @@ function LearnPage() {
   const [testConnections, setTestConnections] = useState({});
   const [selectedWord, setSelectedWord] = useState(null);
   const [testComplete, setTestComplete] = useState(false);
+  const [testWords, setTestWords] = useState([]);  // 测试阶段的单词排序
+  const [testMeanings, setTestMeanings] = useState([]);  // 测试阶段的释义排序
 
   // 拼写练习相关状态
   const [spellingInput, setSpellingInput] = useState('');
@@ -37,11 +39,13 @@ function LearnPage() {
   const [isListening, setIsListening] = useState(false);
   const [practiceWords, setPracticeWords] = useState([]);
   const recognitionRef = useRef(null);
+  const allLearnedIdsRef = useRef([]);  // 用 ref 同步追踪已学习单词ID
 
   // 选择题练习相关状态
   const [selectedOption, setSelectedOption] = useState(null);
   const [practiceOptions, setPracticeOptions] = useState([]);
   const [practiceMode, setPracticeMode] = useState(PRACTICE_MODES.CHOICE);
+  const [allLearnedIds, setAllLearnedIds] = useState([]);  // 用于渲染的 state
 
   // 获取数据
   const book = vocabularyBooks.find(b => b.id === bookId);
@@ -52,13 +56,30 @@ function LearnPage() {
   const learnedWordIds = unitProgress.learnedWords || [];
   const unlearnedWords = unit?.words.filter(w => !learnedWordIds.includes(w.id)) || [];
 
+  // 初始化已学习的单词ID列表（包含之前学习过的）
+  useEffect(() => {
+    if (learnedWordIds.length > 0 && allLearnedIdsRef.current.length === 0) {
+      allLearnedIdsRef.current = learnedWordIds;
+      setAllLearnedIds(learnedWordIds);
+    }
+  }, [learnedWordIds]);
+
+  // 获取真正未学习的单词（使用 ref 确保同步）
+  const getTrulyUnlearnedWords = () => {
+    const learnedIds = allLearnedIdsRef.current;
+    return unit?.words.filter(w => !learnedIds.includes(w.id)) || [];
+  };
+
+  // 用于渲染的未学习单词列表
+  const trulyUnlearnedWords = getTrulyUnlearnedWords();
+
   // 初始化第一批单词
   useEffect(() => {
-    if (unlearnedWords.length > 0 && currentBatch.length === 0) {
-      const batch = unlearnedWords.slice(0, 5);
-      setCurrentBatch(batch);
+    const unlearned = getTrulyUnlearnedWords();
+    if (unlearned.length > 0 && currentBatch.length === 0 && phase === PHASES.LEARNING) {
+      setCurrentBatch(unlearned.slice(0, 5));
     }
-  }, [unlearnedWords]);
+  }, [phase, allLearnedIds]);  // 只依赖 phase 和 allLearnedIds state
 
   // 学习阶段 - 自动播放发音
   useEffect(() => {
@@ -104,6 +125,9 @@ function LearnPage() {
     const word = currentBatch[currentIndex];
     updateProgress(bookId, unitId, word.id);
     setLearnedInBatch(prev => [...prev, word]);
+    // 同时更新 ref 和 state，确保同步
+    allLearnedIdsRef.current = [...allLearnedIdsRef.current, word.id];
+    setAllLearnedIds(prev => [...prev, word.id]);
 
     if (currentIndex < currentBatch.length - 1) {
       setCurrentIndex(currentIndex + 1);
@@ -152,6 +176,41 @@ function LearnPage() {
       }
     }
   }, [phase, practiceMode, practiceIndex, practiceWords, generatePracticeOptions]);
+
+  // 进入测试阶段时，初始化随机排序（只执行一次）
+  useEffect(() => {
+    if (phase === PHASES.TEST && practiceWords.length > 0 && testWords.length === 0) {
+      // 随机排序单词
+      const shuffledWords = [...practiceWords].sort(() => Math.random() - 0.5);
+
+      // 中文释义：练习单词的释义 + 2个干扰项
+      const meanings = [...practiceWords].map(w => w.chinese);
+      // 从单元中其他单词获取干扰项
+      if (unit && unit.words.length > practiceWords.length) {
+        const otherWords = unit.words.filter(w => !practiceWords.find(p => p.id === w.id));
+        const distractors = otherWords
+          .sort(() => Math.random() - 0.5)
+          .slice(0, 2)
+          .map(w => w.chinese);
+        meanings.push(...distractors);
+      }
+      // 随机排序释义
+      const shuffledMeanings = meanings.sort(() => Math.random() - 0.5);
+
+      setTestWords(shuffledWords);
+      setTestMeanings(shuffledMeanings);
+    }
+  }, [phase, practiceWords, testWords.length, unit]);
+
+  // 测试完成时自动播放欢呼并跳转
+  useEffect(() => {
+    if (testComplete) {
+      // 播放鼓励语音
+      audioService.speakWord('易小城，你太厉害了', 'zh-CN').then(() => {
+        handleTestComplete();
+      });
+    }
+  }, [testComplete]);
 
   // 开始语音输入
   const handleStartListening = () => {
@@ -206,6 +265,8 @@ function LearnPage() {
 
     if (correct) {
       audioService.playCorrect();
+      // 答对后播放单词发音
+      await audioService.speakWord(currentWord.english);
 
       setTimeout(() => {
         if (practiceIndex < practiceWords.length - 1) {
@@ -241,6 +302,8 @@ function LearnPage() {
     const correct = selectedWord.chinese === meaning;
     if (correct) {
       audioService.playCorrect();
+      // 连对后播放单词发音
+      await audioService.speakWord(selectedWord.english);
 
       setTestConnections(prev => ({
         ...prev,
@@ -258,9 +321,10 @@ function LearnPage() {
 
   // 测试完成后的处理
   const handleTestComplete = async () => {
-    await audioService.speakEncouragement('correct');
+    // 使用 ref 立即获取最新的已学习单词列表
+    const learnedIds = allLearnedIdsRef.current;
+    const remainingWords = unit?.words.filter(w => !learnedIds.includes(w.id)) || [];
 
-    const remainingWords = unlearnedWords.slice(currentBatch.length);
     if (remainingWords.length > 0) {
       setPhase(PHASES.LEARNING);
       setCurrentBatch(remainingWords.slice(0, 5));
@@ -271,6 +335,8 @@ function LearnPage() {
       setTestComplete(false);
       setCorrectCount(0);
       setSelectedOption(null);
+      setTestWords([]);
+      setTestMeanings([]);
     } else {
       setPhase(PHASES.COMPLETE);
     }
@@ -533,25 +599,18 @@ function LearnPage() {
                   key={option.id}
                   onClick={() => handleSelectOption(option)}
                   disabled={selectedOption && selectedOption !== option.id}
-                  className={`py-4 px-6 rounded-2xl text-lg font-bold transition-all ${
+                  className={`py-4 px-4 rounded-2xl text-lg font-bold transition-all border-2 shadow-md ${
                     selectedOption === option.id
                       ? isCorrect
-                        ? 'bg-green-500 text-white scale-105'
-                        : 'bg-red-500 text-white animate-wiggle'
-                      : 'bg-white text-gray-800 active:scale-95'
+                        ? 'bg-green-500 text-white border-green-500 scale-105'
+                        : 'bg-red-500 text-white border-red-500 animate-wiggle'
+                      : 'bg-blue-50 text-gray-800 border-blue-300 hover:bg-blue-100 active:scale-95'
                   } ${selectedOption && selectedOption !== option.id ? 'opacity-50' : ''}`}
                 >
                   {option.chinese}
                 </button>
               ))}
             </div>
-
-            {/* 提示 */}
-            {isCorrect !== null && (
-              <div className={`mt-6 text-xl font-bold text-center ${isCorrect ? 'text-green-300' : 'text-red-300'}`}>
-                {isCorrect ? '✓ 正确！' : '✗ 再试一次！'}
-              </div>
-            )}
           </div>
 
           {/* 进度指示 */}
@@ -573,10 +632,13 @@ function LearnPage() {
   }
 
   // 渲染测试阶段 - 连连看
-  if (phase === PHASES.TEST) {
-    const shuffledMeanings = [...practiceWords]
-      .map(w => w.chinese)
-      .sort(() => Math.random() - 0.5);
+  if (phase === PHASES.TEST && testWords.length > 0) {
+    // 计算每个英文单词对应的中文释义索引
+    const getMeaningIndex = (wordId) => {
+      const word = testWords.find(w => w.id === wordId);
+      if (!word) return -1;
+      return testMeanings.findIndex(m => m === word.chinese);
+    };
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-400 to-pink-500 p-4 flex flex-col">
@@ -591,24 +653,51 @@ function LearnPage() {
 
         {/* 进度 */}
         <div className="text-center text-white mb-4">
-          已连接: {Object.keys(testConnections).length}/{practiceWords.length}
+          已连接: {Object.keys(testConnections).length}/{testWords.length}
         </div>
 
-        {/* 连连看区域 */}
-        <div className="flex-1 flex gap-4 px-2">
+        {/* 连连看区域 - 使用相对定位 */}
+        <div className="flex-1 relative px-2">
+          {/* SVG 连线层 */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 5 }}>
+            {Object.entries(testConnections).map(([wordId, meaning]) => {
+              const wordIndex = testWords.findIndex(w => w.id === wordId);
+              const meaningIndex = testMeanings.findIndex(m => m === meaning);
+              if (wordIndex === -1 || meaningIndex === -1) return null;
+
+              // 计算连线位置（百分比）
+              const y1 = (wordIndex + 0.5) / testWords.length * 100;
+              const y2 = (meaningIndex + 0.5) / testMeanings.length * 100;
+
+              return (
+                <line
+                  key={wordId}
+                  x1="15%"
+                  y1={`${y1}%`}
+                  x2="85%"
+                  y2={`${y2}%`}
+                  stroke="#22c55e"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  className="animate-draw-line"
+                />
+              );
+            })}
+          </svg>
+
           {/* 左侧 - 英文 */}
-          <div className="flex-1 flex flex-col gap-3">
-            {practiceWords.map(word => (
+          <div className="absolute left-0 top-0 w-[30%] h-full flex flex-col gap-2" style={{ zIndex: 10 }}>
+            {testWords.map(word => (
               <button
                 key={word.id}
                 onClick={() => handleWordClick(word)}
                 disabled={testConnections[word.id]}
-                className={`py-3 px-4 rounded-xl text-lg font-bold transition-all ${
+                className={`flex-1 py-2 px-3 rounded-xl text-base font-bold transition-all ${
                   testConnections[word.id]
-                    ? 'bg-green-500 text-white'
+                    ? 'bg-green-500 text-white shadow-lg'
                     : selectedWord?.id === word.id
-                      ? 'bg-white text-gray-800 scale-105 ring-2 ring-yellow-400'
-                      : 'bg-white/90 text-gray-800 active:scale-95'
+                      ? 'bg-white text-gray-800 scale-105 ring-2 ring-yellow-400 shadow-lg'
+                      : 'bg-white/90 text-gray-800 active:scale-95 hover:bg-white'
                 }`}
               >
                 {word.english}
@@ -616,28 +705,17 @@ function LearnPage() {
             ))}
           </div>
 
-          {/* 中间 - 连线 */}
-          <div className="flex-1 flex flex-col justify-around">
-            {practiceWords.map(word => (
-              <div key={word.id} className="h-8 flex items-center justify-center">
-                {testConnections[word.id] && (
-                  <div className="w-full h-2 bg-green-400 rounded-full" />
-                )}
-              </div>
-            ))}
-          </div>
-
           {/* 右侧 - 中文 */}
-          <div className="flex-1 flex flex-col gap-3">
-            {shuffledMeanings.map((meaning, idx) => (
+          <div className="absolute right-0 top-0 w-[30%] h-full flex flex-col gap-2" style={{ zIndex: 10 }}>
+            {testMeanings.map((meaning, idx) => (
               <button
                 key={idx}
                 onClick={() => handleMeaningClick(meaning)}
                 disabled={Object.values(testConnections).includes(meaning)}
-                className={`py-3 px-4 rounded-xl text-lg font-bold transition-all ${
+                className={`flex-1 py-2 px-3 rounded-xl text-base font-bold transition-all ${
                   Object.values(testConnections).includes(meaning)
-                    ? 'bg-green-500 text-white'
-                    : 'bg-white/90 text-gray-800 active:scale-95'
+                    ? 'bg-green-500 text-white shadow-lg'
+                    : 'bg-white/90 text-gray-800 active:scale-95 hover:bg-white'
                 }`}
               >
                 {meaning}
@@ -646,18 +724,13 @@ function LearnPage() {
           </div>
         </div>
 
-        {/* 完成提示 */}
+        {/* 完成提示 - 自动跳转，不需要按钮 */}
         {testComplete && (
-          <div className="mt-6 flex flex-col gap-3">
+          <div className="mt-6">
             <div className="bg-white rounded-2xl p-6 text-center">
               <h3 className="text-2xl font-bold text-green-600">🎉 太棒了！全部正确！</h3>
+              <p className="text-gray-500 mt-2">正在进入下一环节...</p>
             </div>
-            <button
-              onClick={handleTestComplete}
-              className="py-4 bg-yellow-400 text-gray-800 rounded-2xl text-xl font-bold active:scale-95 transition-transform"
-            >
-              {unlearnedWords.length > currentBatch.length ? '继续学习下一组 →' : '完成本单元 ✨'}
-            </button>
           </div>
         )}
       </div>
@@ -687,7 +760,7 @@ function LearnPage() {
   }
 
   // 没有单词可学习
-  if (unlearnedWords.length === 0) {
+  if (trulyUnlearnedWords.length === 0 && currentBatch.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-400 to-purple-500 p-4 flex flex-col items-center justify-center">
         <div className="bg-white rounded-3xl shadow-2xl p-8 text-center">

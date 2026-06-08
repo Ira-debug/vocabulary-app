@@ -58,6 +58,24 @@ body {
   50% { opacity: .5; }
 }
 
+/* 连线绘制动画 */
+@keyframes draw-line {
+  0% {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    opacity: 0;
+  }
+  100% {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+.animate-draw-line {
+  animation: draw-line 0.4s ease-out forwards;
+}
+
 /* 活跃状态缩放 */
 .active\:scale-98:active {
   transform: scale(0.98);
