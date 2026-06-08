@@ -60,6 +60,7 @@ function LearnPage() {
           <h2 className="text-4xl mb-4">❌</h2>
           <h3 className="text-2xl font-bold text-gray-800 mb-2">页面不存在</h3>
           <p className="text-gray-600 mb-6">找不到该单词本或单元</p>
+          <p className="text-gray-400 text-sm mb-4">bookId: {bookId}, unitId: {unitId}</p>
           <button
             onClick={() => navigate('/')}
             className="py-4 px-6 bg-blue-500 text-white rounded-2xl text-xl font-bold active:scale-95 transition-transform"
@@ -71,10 +72,10 @@ function LearnPage() {
     );
   }
 
-  // 获取进度，找出未学习的单词
+  // 确保 unit 存在后再获取进度
   const unitProgress = getUnitProgress(bookId, unitId, unit);
-  const learnedWordIds = unitProgress.learnedWords || [];
-  const unlearnedWords = unit?.words.filter(w => !learnedWordIds.includes(w.id)) || [];
+  const learnedWordIds = unitProgress?.learnedWords || [];
+  const unlearnedWords = unit.words?.filter(w => !learnedWordIds.includes(w.id)) || [];
 
   // 初始化已学习的单词ID列表（包含之前学习过的）
   useEffect(() => {
