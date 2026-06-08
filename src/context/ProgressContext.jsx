@@ -2,6 +2,12 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 const ProgressContext = createContext(null);
 
+// 获取今天的日期字符串 (YYYY-MM-DD)
+const getTodayKey = () => {
+  const today = new Date();
+  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+};
+
 export function ProgressProvider({ children }) {
   const [progress, setProgress] = useState(() => {
     const saved = localStorage.getItem('vocabulary-progress');
@@ -13,6 +19,12 @@ export function ProgressProvider({ children }) {
     return saved ? JSON.parse(saved) : {};
   });
 
+  // 学习日历数据
+  const [learningCalendar, setLearningCalendar] = useState(() => {
+    const saved = localStorage.getItem('vocabulary-learning-calendar');
+    return saved ? JSON.parse(saved) : {};
+  });
+
   // 保存进度到本地存储
   useEffect(() => {
     localStorage.setItem('vocabulary-progress', JSON.stringify(progress));
@@ -21,6 +33,10 @@ export function ProgressProvider({ children }) {
   useEffect(() => {
     localStorage.setItem('vocabulary-wrong-words', JSON.stringify(wrongWords));
   }, [wrongWords]);
+
+  useEffect(() => {
+    localStorage.setItem('vocabulary-learning-calendar', JSON.stringify(learningCalendar));
+  }, [learningCalendar]);
 
   // 更新单词学习进度
   const updateProgress = (bookId, unitId, wordId) => {
@@ -40,6 +56,32 @@ export function ProgressProvider({ children }) {
       }
       return newProgress;
     });
+
+    // 更新学习日历
+    const todayKey = getTodayKey();
+    setLearningCalendar(prev => {
+      const newCalendar = { ...prev };
+      if (!newCalendar[todayKey]) {
+        newCalendar[todayKey] = 0;
+      }
+      newCalendar[todayKey] += 1;
+      return newCalendar;
+    });
+  };
+
+  // 获取某月的学习日历数据
+  const getMonthCalendar = (year, month) => {
+    const monthData = {};
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const key = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      if (learningCalendar[key]) {
+        monthData[day] = learningCalendar[key];
+      }
+    }
+
+    return monthData;
   };
 
   // 获取单词本进度
@@ -133,7 +175,8 @@ export function ProgressProvider({ children }) {
       addWrongWord,
       removeWrongWord,
       getWrongWords,
-      resetProgress
+      resetProgress,
+      getMonthCalendar
     }}>
       {children}
     </ProgressContext.Provider>

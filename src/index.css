@@ -14,6 +14,8 @@
   --color-primary-900: #1e3a8a;
 
   --animate-wiggle: wiggle 0.5s ease-in-out;
+  --animate-bounce-soft: bounce-soft 0.6s ease-out;
+  --animate-float: float 3s ease-in-out infinite;
 }
 
 /* 基础样式 */
@@ -45,8 +47,27 @@ body {
   50% { transform: rotate(3deg); }
 }
 
+@keyframes bounce-soft {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
 .animate-wiggle {
   animation: wiggle 0.5s ease-in-out;
+}
+
+.animate-bounce-soft {
+  animation: bounce-soft 0.6s ease-out;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
 
 .animate-pulse {
@@ -56,6 +77,34 @@ body {
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: .5; }
+}
+
+/* 卡片样式增强 */
+.card-kid {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+/* 按钮样式增强 */
+.btn-kid {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-kid:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(251, 191, 36, 0.4);
+}
+
+.btn-kid:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* 进度条样式 */
+.progress-star {
+  animation: float 2s ease-in-out infinite;
 }
 
 /* 连线绘制动画 */

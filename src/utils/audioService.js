@@ -108,6 +108,12 @@ class AudioService {
 
     return this.speakWord(text, 'zh-CN');
   }
+
+  // 播放表扬声音（连连看完成时）
+  speakPraise(name = '易小城') {
+    const text = `${name}，你真棒！`;
+    return this.speakWord(text, 'zh-CN');
+  }
 }
 
 export const audioService = new AudioService();
