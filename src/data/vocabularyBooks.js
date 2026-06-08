@@ -2,6 +2,7 @@
 import { grade4Vocabulary } from './grade4Vocabulary.js';
 import { petTeen1Vocabulary } from './petTeen1Vocabulary.js';
 import { petTeen2Vocabulary } from './petTeen2Vocabulary.js';
+import { petTeen3Vocabulary } from './petTeen3Vocabulary.js';
 
 // PET青少版全真模拟题核心词汇表
 export const petVocabulary = {
@@ -248,6 +249,8 @@ export const vocabularyBooks = [
   petTeen1Vocabulary,
   // PET青少版2
   petTeen2Vocabulary,
+  // PET青少版3
+  petTeen3Vocabulary,
   // PET青少版核心词汇
   petVocabulary
 ];
