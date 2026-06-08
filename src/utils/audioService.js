@@ -1,14 +1,19 @@
-// 音频播放工具
+// 音频播放工具 - iOS Safari兼容版本
 class AudioService {
   constructor() {
     this.audioContext = null;
     this.sounds = {};
   }
 
-  // 初始化音频上下文
+  // 初始化音频上下文 - iOS Safari需要特殊处理
   init() {
     if (!this.audioContext) {
       this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    // iOS Safari需要手动激活AudioContext
+    if (this.audioContext.state === 'suspended') {
+      this.audioContext.resume();
     }
   }
 
@@ -32,42 +37,63 @@ class AudioService {
 
         window.speechSynthesis.speak(utterance);
       } else {
-        reject(new Error('Speech synthesis not supported'));
+        // 如果不支持，直接resolve
+        resolve();
       }
     });
   }
 
   // 播放正确音效
   playCorrect() {
-    this.playTone(523.25, 0.1, 'sine'); // C5
-    setTimeout(() => this.playTone(659.25, 0.1, 'sine'), 100); // E5
-    setTimeout(() => this.playTone(783.99, 0.15, 'sine'), 200); // G5
+    try {
+      this.init();
+      if (this.audioContext.state === 'running') {
+        this.playTone(523.25, 0.1, 'sine'); // C5
+        setTimeout(() => this.playTone(659.25, 0.1, 'sine'), 100); // E5
+        setTimeout(() => this.playTone(783.99, 0.15, 'sine'), 200); // G5
+      }
+    } catch (e) {
+      console.log('playCorrect error:', e);
+    }
   }
 
   // 播放错误音效
   playWrong() {
-    this.playTone(200, 0.2, 'square');
-    setTimeout(() => this.playTone(150, 0.3, 'square'), 150);
+    try {
+      this.init();
+      if (this.audioContext.state === 'running') {
+        this.playTone(200, 0.2, 'square');
+        setTimeout(() => this.playTone(150, 0.3, 'square'), 150);
+      }
+    } catch (e) {
+      console.log('playWrong error:', e);
+    }
   }
 
   // 播放音调
   playTone(frequency, duration, type = 'sine') {
-    this.init();
+    if (!this.audioContext || this.audioContext.state !== 'running') {
+      return;
+    }
 
-    const oscillator = this.audioContext.createOscillator();
-    const gainNode = this.audioContext.createGain();
+    try {
+      const oscillator = this.audioContext.createOscillator();
+      const gainNode = this.audioContext.createGain();
 
-    oscillator.connect(gainNode);
-    gainNode.connect(this.audioContext.destination);
+      oscillator.connect(gainNode);
+      gainNode.connect(this.audioContext.destination);
 
-    oscillator.frequency.value = frequency;
-    oscillator.type = type;
+      oscillator.frequency.value = frequency;
+      oscillator.type = type;
 
-    gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration);
+      gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration);
 
-    oscillator.start(this.audioContext.currentTime);
-    oscillator.stop(this.audioContext.currentTime + duration);
+      oscillator.start(this.audioContext.currentTime);
+      oscillator.stop(this.audioContext.currentTime + duration);
+    } catch (e) {
+      console.log('playTone error:', e);
+    }
   }
 
   // 播放鼓励语音
