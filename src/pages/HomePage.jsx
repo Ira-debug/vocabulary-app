@@ -50,7 +50,7 @@ function LearningCalendar() {
     calendarDays.push(
       <div
         key={day}
-        className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs relative ${
+        className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs ${
           wordCount
             ? 'bg-green-400 text-white font-bold shadow-sm'
             : isFuture
@@ -59,11 +59,6 @@ function LearningCalendar() {
         }`}
       >
         {day}
-        {wordCount && (
-          <span className="absolute -top-1 -right-1 bg-green-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center leading-none">
-            {wordCount > 9 ? '9+' : wordCount}
-          </span>
-        )}
       </div>
     );
   }
@@ -114,7 +109,6 @@ function HomePage() {
         <h1 className="text-3xl font-bold text-white drop-shadow-lg">
           📚 背单词乐园
         </h1>
-        <p className="text-white/90 mt-2">选择你想学习的单词本</p>
       </div>
 
       {/* 学习日历 */}

@@ -729,7 +729,7 @@ function LearnPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-400 via-purple-400 to-pink-400 p-4 pb-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-400 via-purple-400 to-pink-400 p-4 flex flex-col">
       {/* 顶部导航 */}
       <div className="flex justify-between items-center mb-2">
         <button onClick={handleBack} className="bg-white/20 text-white px-4 py-2 rounded-full active:scale-98 transition-transform flex items-center gap-1">
@@ -745,28 +745,29 @@ function LearnPage() {
         {renderProgressStars()}
       </div>
 
-      {/* 单词卡片 */}
-      <div className="card-kid rounded-2xl p-6 max-w-sm mx-auto">
-        <div onClick={() => speakWord(word.english)} className="text-center cursor-pointer active:scale-98 transition-transform">
-          <div className="text-3xl font-bold text-gray-800 mb-2">
-            {word.english}
-            <span className="ml-2 text-xl opacity-60">🔊</span>
+      {/* 单词卡片 - 居中 */}
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <div className="card-kid rounded-2xl p-8 w-full max-w-sm">
+          <div onClick={() => speakWord(word.english)} className="text-center cursor-pointer active:scale-98 transition-transform">
+            <div className="text-4xl font-bold text-gray-800 mb-3">
+              {word.english}
+              <span className="ml-2 text-xl opacity-60">🔊</span>
+            </div>
+            {word.phonetic && <div className="text-base text-gray-500 mb-1">{word.phonetic}</div>}
+            {word.partOfSpeech && <div className="text-base text-purple-500 italic mb-3">{word.partOfSpeech}</div>}
+            <div className="text-2xl text-gray-700 font-medium">{word.chinese}</div>
           </div>
-          {word.phonetic && <div className="text-sm text-gray-500 mb-1">{word.phonetic}</div>}
-          {word.partOfSpeech && <div className="text-sm text-purple-500 italic mb-3">{word.partOfSpeech}</div>}
-          <div className="text-xl text-gray-700 font-medium">{word.chinese}</div>
-        </div>
 
-        {/* 例句 */}
-        {word.example && (
-          <button onClick={toggleDetail} className={`w-full mt-4 p-3 rounded-xl transition-all ${showDetail ? 'bg-purple-500 text-white shadow-md' : 'bg-purple-100 text-purple-700 hover:bg-purple-200'}`}>
-            {showDetail ? '✨ 隐藏例句' : '📖 查看例句'}
-          </button>
-        )}
-        {showDetail && word.example && (
-          <div className="mt-4 p-4 bg-purple-50 rounded-xl border-2 border-purple-200">
-            <div className="text-gray-700">{word.example}</div>
-            <div onClick={() => speakWord(word.example)} className="text-sm text-purple-500 mt-2 cursor-pointer flex items-center justify-center gap-1">
+          {/* 例句 */}
+          {word.example && (
+            <button onClick={toggleDetail} className={`w-full mt-6 p-3 rounded-xl transition-all ${showDetail ? 'bg-purple-500 text-white shadow-md' : 'bg-purple-100 text-purple-700 hover:bg-purple-200'}`}>
+              {showDetail ? '✨ 隐藏例句' : '📖 查看例句'}
+            </button>
+          )}
+          {showDetail && word.example && (
+            <div className="mt-4 p-4 bg-purple-50 rounded-xl border-2 border-purple-200">
+              <div className="text-gray-700">{word.example}</div>
+              <div onClick={() => speakWord(word.example)} className="text-sm text-purple-500 mt-2 cursor-pointer flex items-center justify-center gap-1">
               🔊 点击朗读例句
             </div>
           </div>
@@ -807,10 +808,11 @@ function LearnPage() {
       )}
 
       {/* 重读按钮 */}
-      <div className="flex justify-center mt-4">
+      <div className="flex justify-center mt-4 mb-4">
         <button onClick={() => speakWord(word.english)} className="bg-white/20 text-white px-6 py-2 rounded-full active:scale-98 transition-transform flex items-center gap-1">
           🔊 重新朗读
         </button>
+      </div>
       </div>
     </div>
   );
