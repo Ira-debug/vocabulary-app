@@ -70,6 +70,7 @@ function LearnPage() {
   const [selectedWord, setSelectedWord] = useState(null);
   const [selectedMeaning, setSelectedMeaning] = useState(null);
   const [matchingWrongAttempts, setMatchingWrongAttempts] = useState(0);
+  const [matchingRoundComplete, setMatchingRoundComplete] = useState(false); // 本轮完成等待点击
 
   // 连连看轮次管理（分2轮完成整组单词）
   const [matchingRound, setMatchingRound] = useState(1); // 当前轮次
@@ -247,6 +248,7 @@ function LearnPage() {
     setSelectedWord(null);
     setSelectedMeaning(null);
     setMatchingWrongAttempts(0);
+    setMatchingRoundComplete(false);
     setPhase('matching');
   };
 
@@ -284,62 +286,12 @@ function LearnPage() {
 
       // 检查本轮是否完成
       if (matchedPairs.length + 1 === matchingWords.length) {
-        // 检查是否还有第二轮
-        if (matchingRound === 1 && remainingWords.length > 0) {
-          // 进入第二轮连连看
-          setTimeout(() => {
-            setMatchingRound(2);
-            setMatchingWords(remainingWords);
+        // 本轮完成，显示等待点击状态
+        setMatchingRoundComplete(true);
 
-            // 获取干扰项
-            const otherWords = allWords.filter(w => !remainingWords.find(s => s.id === w.id));
-            const distractorCount = Math.max(1, Math.floor(remainingWords.length / 2));
-            const distractors = shuffle(otherWords).slice(0, distractorCount);
-
-            const allMeanings = shuffle([
-              ...remainingWords.map(w => ({ chinese: w.chinese, wordId: w.id, isCorrect: true })),
-              ...distractors.map(w => ({ chinese: w.chinese, wordId: w.id, isCorrect: false }))
-            ]);
-            setMatchingOptions(allMeanings);
-
-            // 重置匹配状态
-            setMatchedPairs([]); // 清空已匹配列表，以便第二轮重新计数
-            setSelectedWord(null);
-            setSelectedMeaning(null);
-            setRemainingWords([]);
-          }, 500);
-        } else {
-          // 全部轮次完成，播放表扬声音
+        // 如果是最后一轮，播放表扬声音
+        if (matchingRound === 2 || remainingWords.length === 0) {
           audioService.speakPraise('易小城');
-
-          setTimeout(() => {
-            // 保存进度
-            testResults.forEach(result => {
-              updateProgress(bookId, unitId, result.word.id);
-              if (result.wrongAttempts > 0) {
-                addWrongWord(bookId, result.word);
-              }
-            });
-            setAllResults(prev => [...prev, ...testResults]);
-
-            // 进入下一批或完成
-            const nextBatchStart = (batchIndex + 1) * BATCH_SIZE;
-            const nextBatch = allWords.slice(nextBatchStart, nextBatchStart + BATCH_SIZE);
-
-            if (nextBatch.length > 0) {
-              // 进入下一批学习
-              setBatchIndex(batchIndex + 1);
-              setCurrentBatch(nextBatch);
-              setCurrentIndex(0);
-              setPhase('learning');
-              setShowDetail(false);
-              setTestResults([]);
-              setMatchingRound(1);
-              setRemainingWords([]);
-            } else {
-              setPhase('complete');
-            }
-          }, 1500);
         }
       }
     } else {
@@ -348,6 +300,61 @@ function LearnPage() {
       setMatchingWrongAttempts(prev => prev + 1);
       setSelectedWord(null);
       setSelectedMeaning(null);
+    }
+  };
+
+  // 连连看本轮完成后，点击"下一个"按钮
+  const handleMatchingNext = () => {
+    if (matchingRound === 1 && remainingWords.length > 0) {
+      // 进入第二轮连连看
+      setMatchingRound(2);
+      setMatchingWords(remainingWords);
+
+      // 获取干扰项
+      const otherWords = allWords.filter(w => !remainingWords.find(s => s.id === w.id));
+      const distractorCount = Math.max(1, Math.floor(remainingWords.length / 2));
+      const distractors = shuffle(otherWords).slice(0, distractorCount);
+
+      const allMeanings = shuffle([
+        ...remainingWords.map(w => ({ chinese: w.chinese, wordId: w.id, isCorrect: true })),
+        ...distractors.map(w => ({ chinese: w.chinese, wordId: w.id, isCorrect: false }))
+      ]);
+      setMatchingOptions(allMeanings);
+
+      // 重置状态
+      setMatchedPairs([]);
+      setSelectedWord(null);
+      setSelectedMeaning(null);
+      setRemainingWords([]);
+      setMatchingRoundComplete(false);
+    } else {
+      // 全部完成，进入下一组学习
+      // 保存进度
+      testResults.forEach(result => {
+        updateProgress(bookId, unitId, result.word.id);
+        if (result.wrongAttempts > 0) {
+          addWrongWord(bookId, result.word);
+        }
+      });
+      setAllResults(prev => [...prev, ...testResults]);
+
+      // 进入下一批或完成
+      const nextBatchStart = (batchIndex + 1) * BATCH_SIZE;
+      const nextBatch = allWords.slice(nextBatchStart, nextBatchStart + BATCH_SIZE);
+
+      if (nextBatch.length > 0) {
+        setBatchIndex(batchIndex + 1);
+        setCurrentBatch(nextBatch);
+        setCurrentIndex(0);
+        setPhase('learning');
+        setShowDetail(false);
+        setTestResults([]);
+        setMatchingRound(1);
+        setRemainingWords([]);
+        setMatchingRoundComplete(false);
+      } else {
+        setPhase('complete');
+      }
     }
   };
 
@@ -536,8 +543,7 @@ function LearnPage() {
   // ===== 连连看阶段 =====
   if (phase === 'matching') {
     const completedCount = batchIndex * BATCH_SIZE + currentBatch.length;
-    const totalMatching = currentBatch.length; // 这组总共要匹配的单词数
-    const roundText = matchingRound === 1 ? '第1轮' : '第2轮';
+    const totalMatching = currentBatch.length;
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-teal-400 via-cyan-400 to-blue-400 p-4 pb-8">
@@ -545,7 +551,7 @@ function LearnPage() {
           <button onClick={handleBack} className="bg-white/20 text-white px-4 py-2 rounded-full active:scale-98 transition-transform">
             ← 返回
           </button>
-          <span className="text-white font-bold">🎯 连连看 · {roundText}</span>
+          <span className="text-white font-bold">🎯 连连看</span>
           <span className="text-white">{completedCount} / {totalWords}</span>
         </div>
 
@@ -553,10 +559,7 @@ function LearnPage() {
           {/* 进度 */}
           <div className="text-center mb-4">
             <div className="text-gray-600 font-medium">
-              本轮：{matchedPairs.length} / {matchingWords.length} ✨
-            </div>
-            <div className="text-sm text-gray-400">
-              总进度：{matchedPairs.length + (matchingRound === 1 ? remainingWords.length : 0)} / {totalMatching}
+              已匹配：{matchedPairs.length} / {matchingWords.length}
             </div>
           </div>
 
@@ -571,7 +574,7 @@ function LearnPage() {
                   <button
                     key={word.id}
                     onClick={() => handleSelectWord(word)}
-                    disabled={isMatched}
+                    disabled={isMatched || matchingRoundComplete}
                     className={`px-4 py-3 rounded-xl text-lg font-bold transition-all ${
                       isMatched
                         ? 'bg-teal-100 text-teal-600 border-2 border-teal-400'
@@ -598,7 +601,7 @@ function LearnPage() {
                   <button
                     key={index}
                     onClick={() => handleSelectMeaning(meaning)}
-                    disabled={isMatched}
+                    disabled={isMatched || matchingRoundComplete}
                     className={`px-4 py-3 rounded-xl text-lg transition-all ${
                       isMatched
                         ? 'bg-blue-100 text-blue-600 border-2 border-blue-400'
@@ -614,12 +617,21 @@ function LearnPage() {
             </div>
           </div>
 
-          {/* 提示 */}
-          <div className="text-center text-gray-500 mt-4 text-sm">
-            {matchingWords.length - matchedPairs.length > 0
-              ? '🔗 将单词与正确释义连线'
-              : '🎉 本轮完成！'}
-          </div>
+          {/* 提示或下一个按钮 */}
+          {matchingRoundComplete ? (
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={handleMatchingNext}
+                className="btn-kid px-8 py-3 rounded-full text-white font-medium"
+              >
+                下一个 ➡️
+              </button>
+            </div>
+          ) : (
+            <div className="text-center text-gray-500 mt-4 text-sm">
+              将单词与正确释义连线
+            </div>
+          )}
         </div>
       </div>
     );
