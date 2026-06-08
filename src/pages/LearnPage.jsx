@@ -21,6 +21,7 @@ function LearnPage() {
   const navigate = useNavigate();
   const { updateProgress, getUnitProgress, addWrongWord } = useProgress();
 
+  // 所有 state hooks 必须在组件顶部
   const [phase, setPhase] = useState(PHASES.LEARNING);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentBatch, setCurrentBatch] = useState([]);
@@ -29,53 +30,31 @@ function LearnPage() {
   const [testConnections, setTestConnections] = useState({});
   const [selectedWord, setSelectedWord] = useState(null);
   const [testComplete, setTestComplete] = useState(false);
-  const [testWords, setTestWords] = useState([]);  // 测试阶段的单词排序
-  const [testMeanings, setTestMeanings] = useState([]);  // 测试阶段的释义排序
+  const [testWords, setTestWords] = useState([]);
+  const [testMeanings, setTestMeanings] = useState([]);
 
-  // 拼写练习相关状态
   const [spellingInput, setSpellingInput] = useState('');
   const [isCorrect, setIsCorrect] = useState(null);
   const [correctCount, setCorrectCount] = useState(0);
   const [isListening, setIsListening] = useState(false);
   const [practiceWords, setPracticeWords] = useState([]);
   const recognitionRef = useRef(null);
-  const allLearnedIdsRef = useRef([]);  // 用 ref 同步追踪已学习单词ID
-  const learnedInBatchRef = useRef([]);  // 用 ref 同步追踪本批次学习的单词
+  const allLearnedIdsRef = useRef([]);
+  const learnedInBatchRef = useRef([]);
 
-  // 选择题练习相关状态
   const [selectedOption, setSelectedOption] = useState(null);
   const [practiceOptions, setPracticeOptions] = useState([]);
   const [practiceMode, setPracticeMode] = useState(PRACTICE_MODES.CHOICE);
-  const [allLearnedIds, setAllLearnedIds] = useState([]);  // 用于渲染的 state
+  const [allLearnedIds, setAllLearnedIds] = useState([]);
 
-  // 获取数据
+  // 获取数据 - 在 hooks 之后
   const book = vocabularyBooks.find(b => b.id === bookId);
-  const unit = book?.units.find(u => u.id === unitId);
+  const unit = book?.units?.find(u => u.id === unitId);
 
-  // 如果单词本或单元不存在，显示错误页面
-  if (!book || !unit) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-red-400 to-orange-500 p-4 flex flex-col items-center justify-center">
-        <div className="bg-white rounded-3xl shadow-2xl p-8 text-center">
-          <h2 className="text-4xl mb-4">❌</h2>
-          <h3 className="text-2xl font-bold text-gray-800 mb-2">页面不存在</h3>
-          <p className="text-gray-600 mb-6">找不到该单词本或单元</p>
-          <p className="text-gray-400 text-sm mb-4">bookId: {bookId}, unitId: {unitId}</p>
-          <button
-            onClick={() => navigate('/')}
-            className="py-4 px-6 bg-blue-500 text-white rounded-2xl text-xl font-bold active:scale-95 transition-transform"
-          >
-            返回首页
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // 确保 unit 存在后再获取进度
-  const unitProgress = getUnitProgress(bookId, unitId, unit);
-  const learnedWordIds = unitProgress?.learnedWords || [];
-  const unlearnedWords = unit.words?.filter(w => !learnedWordIds.includes(w.id)) || [];
+  // 获取进度 - 使用安全访问
+  const unitProgress = unit ? getUnitProgress(bookId, unitId, unit) : { learnedWords: [], learned: 0, total: 0, percentage: 0 };
+  const learnedWordIds = unitProgress.learnedWords || [];
+  const unlearnedWords = unit?.words?.filter(w => !learnedWordIds.includes(w.id)) || [];
 
   // 初始化已学习的单词ID列表（包含之前学习过的）
   useEffect(() => {
@@ -370,6 +349,25 @@ function LearnPage() {
   const handleBack = () => {
     navigate(`/book/${bookId}`);
   };
+
+  // 渲染部分 - 先检查 book/unit 是否存在
+  if (!book || !unit) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-red-400 to-orange-500 p-4 flex flex-col items-center justify-center">
+        <div className="bg-white rounded-3xl shadow-2xl p-8 text-center">
+          <h2 className="text-4xl mb-4">❌</h2>
+          <h3 className="text-2xl font-bold text-gray-800 mb-2">页面不存在</h3>
+          <p className="text-gray-600 mb-6">找不到该单词本或单元</p>
+          <button
+            onClick={() => navigate('/')}
+            className="py-4 px-6 bg-blue-500 text-white rounded-2xl text-xl font-bold active:scale-95 transition-transform"
+          >
+            返回首页
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // 渲染学习阶段
   if (phase === PHASES.LEARNING && currentBatch.length > 0) {
