@@ -40,6 +40,7 @@ function LearnPage() {
   const [practiceWords, setPracticeWords] = useState([]);
   const recognitionRef = useRef(null);
   const allLearnedIdsRef = useRef([]);  // 用 ref 同步追踪已学习单词ID
+  const learnedInBatchRef = useRef([]);  // 用 ref 同步追踪本批次学习的单词
 
   // 选择题练习相关状态
   const [selectedOption, setSelectedOption] = useState(null);
@@ -124,8 +125,9 @@ function LearnPage() {
   const handleNextWord = () => {
     const word = currentBatch[currentIndex];
     updateProgress(bookId, unitId, word.id);
-    setLearnedInBatch(prev => [...prev, word]);
     // 同时更新 ref 和 state，确保同步
+    learnedInBatchRef.current = [...learnedInBatchRef.current, word];
+    setLearnedInBatch(prev => [...prev, word]);
     allLearnedIdsRef.current = [...allLearnedIdsRef.current, word.id];
     setAllLearnedIds(prev => [...prev, word.id]);
 
@@ -140,7 +142,8 @@ function LearnPage() {
 
   // 初始化练习单词列表
   const initPracticeWords = useCallback(() => {
-    const shuffled = [...learnedInBatch].sort(() => Math.random() - 0.5);
+    // 使用 ref 确保获取到完整的本批次单词
+    const shuffled = [...learnedInBatchRef.current].sort(() => Math.random() - 0.5);
     setPracticeWords(shuffled);
     setPracticeIndex(0);
     setSpellingInput('');
@@ -155,7 +158,7 @@ function LearnPage() {
       setPracticeMode(PRACTICE_MODES.CHOICE);
       generatePracticeOptions(shuffled[0]);
     }
-  }, [learnedInBatch, bookId]);
+  }, [bookId, generatePracticeOptions]);
 
   // 生成选择题选项
   const generatePracticeOptions = useCallback((currentWord) => {
@@ -330,6 +333,7 @@ function LearnPage() {
       setCurrentBatch(remainingWords.slice(0, 5));
       setCurrentIndex(0);
       setLearnedInBatch([]);
+      learnedInBatchRef.current = [];  // 清空本批次学习的 ref
       setPracticeWords([]);
       setTestConnections({});
       setTestComplete(false);
