@@ -3,8 +3,7 @@ class AudioService {
   constructor() {
     this.audioContext = null;
     this.sounds = {};
-    this.isInitialized = false;
-    this.voicesLoaded = false;
+    this.isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   }
 
   // 初始化音频上下文 - iOS Safari需要特殊处理
@@ -17,88 +16,101 @@ class AudioService {
     if (this.audioContext.state === 'suspended') {
       this.audioContext.resume();
     }
-
-    this.isInitialized = true;
-  }
-
-  // 加载语音列表 - iOS Safari需要先触发
-  loadVoices() {
-    if ('speechSynthesis' in window) {
-      // iOS Safari 需要先获取 voices 才能正常工作
-      const voices = window.speechSynthesis.getVoices();
-      if (voices.length > 0) {
-        this.voicesLoaded = true;
-      }
-
-      // 监听 voiceschanged 事件
-      window.speechSynthesis.onvoiceschanged = () => {
-        this.voicesLoaded = true;
-      };
-    }
   }
 
   // 播放单词发音（使用Web Speech API）
   speakWord(word, lang = 'en-US') {
-    return new Promise((resolve, reject) => {
-      // 确保初始化
+    return new Promise((resolve) => {
+      // 确保初始化 AudioContext（iOS 需要）
       this.init();
 
-      if ('speechSynthesis' in window) {
-        // 取消之前的发音
-        window.speechSynthesis.cancel();
-
-        // 创建 utterance
-        const utterance = new SpeechSynthesisUtterance(word);
-        utterance.lang = lang;
-        utterance.rate = 0.8;
-        utterance.pitch = 1;
-        utterance.volume = 1;
-
-        // 尝试获取合适的语音
-        const voices = window.speechSynthesis.getVoices();
-        const targetVoice = voices.find(v => v.lang.startsWith(lang.split('-')[0])) || voices[0];
-        if (targetVoice) {
-          utterance.voice = targetVoice;
-        }
-
-        utterance.onend = () => resolve();
-        utterance.onerror = (e) => {
-          console.log('speech error:', e);
-          resolve(); // 即使出错也 resolve，避免阻塞
-        };
-
-        // iOS Safari 特殊处理：需要延迟才能正常播放
-        // 使用 setTimeout 确保 speechSynthesis 已准备好
-        const speakDelay = this.isInitialized ? 50 : 100;
-
-        setTimeout(() => {
-          try {
-            window.speechSynthesis.speak(utterance);
-
-            // iOS Safari 的 hack：有时候 speak 后立即 pause 再 resume 能解决静音问题
-            setTimeout(() => {
-              if (window.speechSynthesis.speaking === false && window.speechSynthesis.paused === false) {
-                // 如果没有开始说话，尝试重新触发
-                window.speechSynthesis.cancel();
-                window.speechSynthesis.speak(utterance);
-              }
-            }, 100);
-          } catch (e) {
-            console.log('speak error:', e);
-            resolve();
-          }
-        }, speakDelay);
-      } else {
+      if (!('speechSynthesis' in window)) {
         resolve();
+        return;
+      }
+
+      // iOS Safari 特殊处理
+      if (this.isIOS) {
+        this.speakOnIOS(word, lang, resolve);
+      } else {
+        this.speakOnOther(word, lang, resolve);
       }
     });
+  }
+
+  // iOS Safari 专用播放方法
+  speakOnIOS(word, lang, resolve) {
+    // 先取消之前的发音
+    window.speechSynthesis.cancel();
+
+    // iOS 需要：先播放一个空的 utterance 来"唤醒" speechSynthesis
+    const wakeUp = new SpeechSynthesisUtterance('');
+    wakeUp.lang = lang;
+    window.speechSynthesis.speak(wakeUp);
+
+    // 等待一小段时间后播放真正的内容
+    setTimeout(() => {
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(word);
+      utterance.lang = lang;
+      utterance.rate = 0.8;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+
+      // 尝试获取英语语音
+      const voices = window.speechSynthesis.getVoices();
+      const englishVoice = voices.find(v => v.lang.startsWith('en'));
+      if (englishVoice) {
+        utterance.voice = englishVoice;
+      }
+
+      utterance.onend = () => resolve();
+      utterance.onerror = () => resolve();
+
+      window.speechSynthesis.speak(utterance);
+
+      // iOS Safari hack：强制触发播放
+      // 通过暂停和恢复来确保播放
+      setTimeout(() => {
+        if (!window.speechSynthesis.speaking) {
+          window.speechSynthesis.pause();
+          window.speechSynthesis.resume();
+        }
+      }, 50);
+
+      // 超时保护
+      setTimeout(resolve, 5000);
+    }, 100);
+  }
+
+  // 其他浏览器播放方法
+  speakOnOther(word, lang, resolve) {
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = lang;
+    utterance.rate = 0.8;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+
+    const voices = window.speechSynthesis.getVoices();
+    const targetVoice = voices.find(v => v.lang.startsWith(lang.split('-')[0]));
+    if (targetVoice) {
+      utterance.voice = targetVoice;
+    }
+
+    utterance.onend = () => resolve();
+    utterance.onerror = () => resolve();
+
+    window.speechSynthesis.speak(utterance);
   }
 
   // 播放正确音效
   playCorrect() {
     try {
       this.init();
-      if (this.audioContext.state === 'running') {
+      if (this.audioContext && this.audioContext.state === 'running') {
         this.playTone(523.25, 0.1, 'sine'); // C5
         setTimeout(() => this.playTone(659.25, 0.1, 'sine'), 100); // E5
         setTimeout(() => this.playTone(783.99, 0.15, 'sine'), 200); // G5
@@ -112,7 +124,7 @@ class AudioService {
   playWrong() {
     try {
       this.init();
-      if (this.audioContext.state === 'running') {
+      if (this.audioContext && this.audioContext.state === 'running') {
         this.playTone(200, 0.2, 'square');
         setTimeout(() => this.playTone(150, 0.3, 'square'), 150);
       }
@@ -145,19 +157,6 @@ class AudioService {
     } catch (e) {
       console.log('playTone error:', e);
     }
-  }
-
-  // 播放鼓励语音
-  speakEncouragement(type = 'correct') {
-    const encouragements = {
-      correct: ['太棒了！', '真厉害！', '非常好！', '答对了！', '你真聪明！'],
-      wrong: ['再试试！', '加油！', '别灰心！', '你可以的！']
-    };
-
-    const list = encouragements[type];
-    const text = list[Math.floor(Math.random() * list.length)];
-
-    return this.speakWord(text, 'zh-CN');
   }
 
   // 播放表扬声音（连连看完成时）
