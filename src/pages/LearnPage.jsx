@@ -552,17 +552,10 @@ function LearnPage() {
             ← 返回
           </button>
           <span className="text-white font-bold">🎯 连连看</span>
-          <span className="text-white">{completedCount} / {totalWords}</span>
+          <span></span>
         </div>
 
         <div className="card-kid rounded-2xl p-6 max-w-md mx-auto">
-          {/* 进度 */}
-          <div className="text-center mb-4">
-            <div className="text-gray-600 font-medium">
-              已匹配：{matchedPairs.length} / {matchingWords.length}
-            </div>
-          </div>
-
           {/* 英文单词列 */}
           <div className="mb-6">
             <div className="text-sm text-teal-600 mb-2 text-center font-medium">📝 点击单词</div>
@@ -696,7 +689,7 @@ function LearnPage() {
                   key={index}
                   onClick={() => handleSelectAnswer(option)}
                   disabled={isDisabled}
-                  className={`w-full p-4 text-left text-lg rounded-xl transition-all active:scale-98 ${
+                  className={`w-full p-4 text-center text-lg rounded-xl transition-all active:scale-98 ${
                     isCorrectSelected
                       ? 'bg-green-100 text-green-700 border-2 border-green-400 shadow-sm'
                       : isSelectedWrong
