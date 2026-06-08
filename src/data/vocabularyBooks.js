@@ -1,5 +1,6 @@
 // 单词本数据
 import { grade4Vocabulary } from './grade4Vocabulary.js';
+import { petTeen1Vocabulary } from './petTeen1Vocabulary.js';
 
 // PET青少版全真模拟题核心词汇表
 export const petVocabulary = {
@@ -242,6 +243,8 @@ export const petVocabulary = {
 export const vocabularyBooks = [
   // 四年级下册
   grade4Vocabulary,
+  // PET青少版1
+  petTeen1Vocabulary,
   // PET青少版核心词汇
   petVocabulary
 ];
