@@ -147,11 +147,8 @@ function HomePage() {
                     </div>
                     <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div
-                        className="h-full rounded-full transition-all duration-500"
-                        style={{
-                          width: `${progress.percentage}%`,
-                          backgroundColor: book.color
-                        }}
+                        className="h-full rounded-full transition-all duration-500 bg-green-500"
+                        style={{ width: `${progress.percentage}%` }}
                       />
                     </div>
                   </div>
