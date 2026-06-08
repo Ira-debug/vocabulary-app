@@ -3,6 +3,8 @@ class AudioService {
   constructor() {
     this.audioContext = null;
     this.sounds = {};
+    this.isInitialized = false;
+    this.voicesLoaded = false;
   }
 
   // 初始化音频上下文 - iOS Safari需要特殊处理
@@ -15,29 +17,78 @@ class AudioService {
     if (this.audioContext.state === 'suspended') {
       this.audioContext.resume();
     }
+
+    this.isInitialized = true;
+  }
+
+  // 加载语音列表 - iOS Safari需要先触发
+  loadVoices() {
+    if ('speechSynthesis' in window) {
+      // iOS Safari 需要先获取 voices 才能正常工作
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        this.voicesLoaded = true;
+      }
+
+      // 监听 voiceschanged 事件
+      window.speechSynthesis.onvoiceschanged = () => {
+        this.voicesLoaded = true;
+      };
+    }
   }
 
   // 播放单词发音（使用Web Speech API）
   speakWord(word, lang = 'en-US') {
     return new Promise((resolve, reject) => {
-      // 确保在用户交互后调用
+      // 确保初始化
       this.init();
 
       if ('speechSynthesis' in window) {
         // 取消之前的发音
         window.speechSynthesis.cancel();
 
+        // 创建 utterance
         const utterance = new SpeechSynthesisUtterance(word);
         utterance.lang = lang;
-        utterance.rate = 0.8; // 稍慢一点，适合儿童
+        utterance.rate = 0.8;
         utterance.pitch = 1;
+        utterance.volume = 1;
+
+        // 尝试获取合适的语音
+        const voices = window.speechSynthesis.getVoices();
+        const targetVoice = voices.find(v => v.lang.startsWith(lang.split('-')[0])) || voices[0];
+        if (targetVoice) {
+          utterance.voice = targetVoice;
+        }
 
         utterance.onend = () => resolve();
-        utterance.onerror = (e) => reject(e);
+        utterance.onerror = (e) => {
+          console.log('speech error:', e);
+          resolve(); // 即使出错也 resolve，避免阻塞
+        };
 
-        window.speechSynthesis.speak(utterance);
+        // iOS Safari 特殊处理：需要延迟才能正常播放
+        // 使用 setTimeout 确保 speechSynthesis 已准备好
+        const speakDelay = this.isInitialized ? 50 : 100;
+
+        setTimeout(() => {
+          try {
+            window.speechSynthesis.speak(utterance);
+
+            // iOS Safari 的 hack：有时候 speak 后立即 pause 再 resume 能解决静音问题
+            setTimeout(() => {
+              if (window.speechSynthesis.speaking === false && window.speechSynthesis.paused === false) {
+                // 如果没有开始说话，尝试重新触发
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(utterance);
+              }
+            }, 100);
+          } catch (e) {
+            console.log('speak error:', e);
+            resolve();
+          }
+        }, speakDelay);
       } else {
-        // 如果不支持，直接resolve
         resolve();
       }
     });
