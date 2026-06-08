@@ -310,23 +310,27 @@ function LearnPage() {
 
   // 连连看本轮完成后，点击"下一个"按钮
   const handleMatchingNext = () => {
-    if (matchingRound === 1 && remainingWords.length > 0) {
+    // 判断是否还有第二轮（使用当前状态判断）
+    const hasNextRound = matchingRound === 1 && remainingWords.length > 0;
+
+    if (hasNextRound) {
       // 进入第二轮连连看
-      setMatchingRound(2);
-      setMatchingWords(remainingWords);
+      const nextWords = remainingWords;
 
       // 获取干扰项
-      const otherWords = allWords.filter(w => !remainingWords.find(s => s.id === w.id));
-      const distractorCount = Math.max(1, Math.floor(remainingWords.length / 2));
+      const otherWords = allWords.filter(w => !nextWords.find(s => s.id === w.id));
+      const distractorCount = Math.max(1, Math.floor(nextWords.length / 2));
       const distractors = shuffle(otherWords).slice(0, distractorCount);
 
       const allMeanings = shuffle([
-        ...remainingWords.map(w => ({ chinese: w.chinese, wordId: w.id, isCorrect: true })),
+        ...nextWords.map(w => ({ chinese: w.chinese, wordId: w.id, isCorrect: true })),
         ...distractors.map(w => ({ chinese: w.chinese, wordId: w.id, isCorrect: false }))
       ]);
-      setMatchingOptions(allMeanings);
 
-      // 重置状态
+      // 批量更新状态
+      setMatchingRound(2);
+      setMatchingWords(nextWords);
+      setMatchingOptions(allMeanings);
       setMatchedPairs([]);
       setSelectedWord(null);
       setSelectedMeaning(null);
