@@ -86,14 +86,22 @@ export function ProgressProvider({ children }) {
 
   // 获取单词本进度
   const getBookProgress = (bookId, book) => {
-    const bookProgress = progress[bookId];
-    if (!bookProgress) return { learned: 0, total: 0, percentage: 0 };
-
+    // 先计算总单词数（无论是否有学习进度）
     let totalLearned = 0;
     let totalWords = 0;
 
+    if (book && book.units) {
+      book.units.forEach(unit => {
+        totalWords += unit.words.length;
+      });
+    }
+
+    const bookProgress = progress[bookId];
+    if (!bookProgress) {
+      return { learned: 0, total: totalWords, percentage: 0 };
+    }
+
     book.units.forEach(unit => {
-      totalWords += unit.words.length;
       if (bookProgress.units[unit.id]) {
         totalLearned += bookProgress.units[unit.id].learnedWords.length;
       }
