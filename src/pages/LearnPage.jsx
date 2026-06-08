@@ -302,7 +302,8 @@ function LearnPage() {
             ]);
             setMatchingOptions(allMeanings);
 
-            // 重置匹配状态（保留 matchedPairs 用于显示已完成）
+            // 重置匹配状态
+            setMatchedPairs([]); // 清空已匹配列表，以便第二轮重新计数
             setSelectedWord(null);
             setSelectedMeaning(null);
             setRemainingWords([]);
