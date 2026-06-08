@@ -8,7 +8,7 @@ import { petStandard1Vocabulary } from './petStandard1Vocabulary.js';
 // PET青少版全真模拟题核心词汇表
 export const petVocabulary = {
   id: 'pet-teen',
-  name: 'PET青少版',
+  name: 'PET青少版全真模拟',
   description: 'PET青少版全真模拟题核心词汇',
   category: 'exam',
   color: '#f59e0b',

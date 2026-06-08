@@ -565,57 +565,60 @@ function LearnPage() {
         </div>
 
         <div className="card-kid rounded-2xl p-6 max-w-md mx-auto">
-          {/* 英文单词列 */}
-          <div className="mb-6">
-            <div className="text-sm text-teal-600 mb-2 text-center font-medium">📝 点击单词</div>
-            <div className="flex flex-wrap justify-center gap-3">
-              {matchingWords.map(word => {
-                const isMatched = matchedPairs.find(p => p.wordId === word.id);
-                const isSelected = selectedWord?.id === word.id;
-                return (
-                  <button
-                    key={word.id}
-                    onClick={() => handleSelectWord(word)}
-                    disabled={isMatched || matchingRoundComplete}
-                    className={`px-4 py-3 rounded-xl text-lg font-bold transition-all ${
-                      isMatched
-                        ? 'bg-teal-100 text-teal-600 border-2 border-teal-400'
-                        : isSelected
-                          ? 'bg-cyan-200 text-cyan-800 border-3 border-cyan-500 scale-110 shadow-lg'
-                          : 'bg-teal-50 text-gray-700 hover:bg-teal-100 active:scale-98 border-2 border-teal-200'
-                    } ${isMatched ? 'cursor-default' : 'cursor-pointer'}`}
-                  >
-                    {word.english}
-                  </button>
-                );
-              })}
+          {/* 单词和释义 - 左右布局 */}
+          <div className="flex gap-4">
+            {/* 左侧：英文单词列 */}
+            <div className="flex-1">
+              <div className="text-sm text-teal-600 mb-2 text-center font-medium">📝 单词</div>
+              <div className="space-y-3">
+                {matchingWords.map(word => {
+                  const isMatched = matchedPairs.find(p => p.wordId === word.id);
+                  const isSelected = selectedWord?.id === word.id;
+                  return (
+                    <button
+                      key={word.id}
+                      onClick={() => handleSelectWord(word)}
+                      disabled={isMatched || matchingRoundComplete}
+                      className={`w-full px-4 py-3 rounded-xl text-lg font-bold transition-all ${
+                        isMatched
+                          ? 'bg-teal-100 text-teal-600 border-2 border-teal-400'
+                          : isSelected
+                            ? 'bg-cyan-200 text-cyan-800 border-3 border-cyan-500 scale-105 shadow-lg'
+                            : 'bg-teal-50 text-gray-700 hover:bg-teal-100 active:scale-98 border-2 border-teal-200'
+                      } ${isMatched ? 'cursor-default' : 'cursor-pointer'}`}
+                    >
+                      {word.english}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
 
-          {/* 中文释义列 */}
-          <div>
-            <div className="text-sm text-blue-600 mb-2 text-center font-medium">📖 点击释义</div>
-            <div className="flex flex-wrap justify-center gap-3">
-              {matchingOptions.map((meaning, index) => {
-                const isMatched = matchedPairs.find(p => p.chinese === meaning.chinese);
-                const isSelected = selectedMeaning?.chinese === meaning.chinese;
-                return (
-                  <button
-                    key={index}
-                    onClick={() => handleSelectMeaning(meaning)}
-                    disabled={isMatched || matchingRoundComplete}
-                    className={`px-4 py-3 rounded-xl text-lg transition-all ${
-                      isMatched
-                        ? 'bg-blue-100 text-blue-600 border-2 border-blue-400'
-                        : isSelected
-                          ? 'bg-indigo-200 text-indigo-800 border-3 border-indigo-500 scale-110 shadow-lg'
-                          : 'bg-blue-50 text-gray-700 hover:bg-blue-100 active:scale-98 border-2 border-blue-200'
-                    } ${isMatched ? 'cursor-default' : 'cursor-pointer'}`}
-                  >
-                    {meaning.chinese}
-                  </button>
-                );
-              })}
+            {/* 右侧：中文释义列 */}
+            <div className="flex-1">
+              <div className="text-sm text-blue-600 mb-2 text-center font-medium">📖 释义</div>
+              <div className="space-y-3">
+                {matchingOptions.map((meaning, index) => {
+                  const isMatched = matchedPairs.find(p => p.chinese === meaning.chinese);
+                  const isSelected = selectedMeaning?.chinese === meaning.chinese;
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => handleSelectMeaning(meaning)}
+                      disabled={isMatched || matchingRoundComplete}
+                      className={`w-full px-4 py-3 rounded-xl text-lg transition-all ${
+                        isMatched
+                          ? 'bg-blue-100 text-blue-600 border-2 border-blue-400'
+                          : isSelected
+                            ? 'bg-indigo-200 text-indigo-800 border-3 border-indigo-500 scale-105 shadow-lg'
+                            : 'bg-blue-50 text-gray-700 hover:bg-blue-100 active:scale-98 border-2 border-blue-200'
+                      } ${isMatched ? 'cursor-default' : 'cursor-pointer'}`}
+                    >
+                      {meaning.chinese}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
