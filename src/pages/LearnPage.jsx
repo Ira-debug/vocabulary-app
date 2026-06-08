@@ -647,7 +647,7 @@ function LearnPage() {
     };
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-400 via-pink-400 to-purple-400 p-4 pb-8">
+      <div className="min-h-screen bg-gradient-to-br from-green-400 via-emerald-400 to-teal-400 p-4 pb-8">
         <div className="flex justify-between items-center mb-4">
           <button onClick={handleBack} className="bg-white/20 text-white px-4 py-2 rounded-full active:scale-98 transition-transform">
             ← 返回
