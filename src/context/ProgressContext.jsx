@@ -66,16 +66,22 @@ export function ProgressProvider({ children }) {
 
   // 获取单元进度
   const getUnitProgress = (bookId, unitId, unit) => {
-    const bookProgress = progress[bookId];
-    if (!bookProgress || !bookProgress.units[unitId]) {
-      return { learned: 0, total: unit.words.length, percentage: 0 };
+    // 如果 unit 不存在，返回默认值
+    if (!unit) {
+      return { learnedWords: [], learned: 0, total: 0, percentage: 0 };
     }
 
-    const learnedWords = bookProgress.units[unitId].learnedWords;
+    const bookProgress = progress[bookId];
+    if (!bookProgress || !bookProgress.units[unitId]) {
+      return { learnedWords: [], learned: 0, total: unit.words.length, percentage: 0 };
+    }
+
+    const learnedWords = bookProgress.units[unitId].learnedWords || [];
     return {
+      learnedWords,
       learned: learnedWords.length,
       total: unit.words.length,
-      percentage: Math.round((learnedWords.length / unit.words.length) * 100)
+      percentage: unit.words.length > 0 ? Math.round((learnedWords.length / unit.words.length) * 100) : 0
     };
   };
 
