@@ -142,7 +142,7 @@ function LearnPage() {
   // 学完最后一个单词后自动进入测试
   useEffect(() => {
     if (phase === 'learning' && currentBatch.length > 0 && currentIndex === currentBatch.length - 1) {
-      const timer = setTimeout(() => startTest(), 1000);
+      const timer = setTimeout(() => startTest(), 3000); // 增加延迟到3秒
       return () => clearTimeout(timer);
     }
   }, [currentIndex, currentBatch, phase]);
@@ -791,7 +791,7 @@ function LearnPage() {
               : 'bg-white/30 text-white hover:bg-white/40 active:scale-98 cursor-pointer'
           }`}
         >
-          ⬅️ 上一个
+          上一个
         </button>
         <button
           onClick={handleNext}
@@ -802,7 +802,7 @@ function LearnPage() {
               : 'cursor-pointer'
           }`}
         >
-          下一个 ➡️
+          下一个
         </button>
       </div>
 
