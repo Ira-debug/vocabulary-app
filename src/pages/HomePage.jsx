@@ -144,7 +144,6 @@ function HomePage() {
                 {/* 信息 */}
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-gray-800">{book.name}</h3>
-                  <p className="text-gray-500 text-sm">{book.description}</p>
 
                   {/* 进度条 */}
                   <div className="mt-2">
