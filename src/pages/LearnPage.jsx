@@ -645,23 +645,18 @@ function LearnPage() {
     };
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-400 to-pink-500 p-4 flex flex-col">
+      <div className="min-h-screen bg-gradient-to-br from-purple-400 to-pink-500 p-2 flex flex-col">
         {/* 头部 */}
-        <div className="flex items-center justify-between py-4">
-          <button onClick={handleBack} className="text-white text-xl">←</button>
-          <div className="text-white">
-            测试阶段 - 连连看
+        <div className="flex items-center justify-between py-2">
+          <button onClick={handleBack} className="text-white text-lg">←</button>
+          <div className="text-white text-sm">
+            测试阶段 - 连连看 ({Object.keys(testConnections).length}/{testWords.length})
           </div>
-          <div className="text-white text-xl">🔗</div>
-        </div>
-
-        {/* 进度 */}
-        <div className="text-center text-white mb-4">
-          已连接: {Object.keys(testConnections).length}/{testWords.length}
+          <div className="text-white text-lg">🔗</div>
         </div>
 
         {/* 连连看区域 - 使用相对定位 */}
-        <div className="flex-1 relative px-2">
+        <div className="flex-1 relative px-1">
           {/* SVG 连线层 */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 5 }}>
             {Object.entries(testConnections).map(([wordId, meaning]) => {
@@ -681,7 +676,7 @@ function LearnPage() {
                   x2="85%"
                   y2={`${y2}%`}
                   stroke="#22c55e"
-                  strokeWidth="3"
+                  strokeWidth="2"
                   strokeLinecap="round"
                   className="animate-draw-line"
                 />
@@ -690,18 +685,18 @@ function LearnPage() {
           </svg>
 
           {/* 左侧 - 英文 */}
-          <div className="absolute left-0 top-0 w-[30%] h-full flex flex-col gap-2" style={{ zIndex: 10 }}>
+          <div className="absolute left-0 top-0 w-[28%] h-full flex flex-col gap-1" style={{ zIndex: 10 }}>
             {testWords.map(word => (
               <button
                 key={word.id}
                 onClick={() => handleWordClick(word)}
                 disabled={testConnections[word.id]}
-                className={`flex-1 py-2 px-3 rounded-xl text-base font-bold transition-all ${
+                className={`flex-1 py-1 px-2 rounded-lg text-sm font-bold transition-all ${
                   testConnections[word.id]
-                    ? 'bg-green-500 text-white shadow-lg'
+                    ? 'bg-green-500 text-white'
                     : selectedWord?.id === word.id
-                      ? 'bg-white text-gray-800 scale-105 ring-2 ring-yellow-400 shadow-lg'
-                      : 'bg-white/90 text-gray-800 active:scale-95 hover:bg-white'
+                      ? 'bg-white text-gray-800 ring-2 ring-yellow-400'
+                      : 'bg-white/90 text-gray-800 active:scale-95'
                 }`}
               >
                 {word.english}
@@ -710,16 +705,16 @@ function LearnPage() {
           </div>
 
           {/* 右侧 - 中文 */}
-          <div className="absolute right-0 top-0 w-[30%] h-full flex flex-col gap-2" style={{ zIndex: 10 }}>
+          <div className="absolute right-0 top-0 w-[28%] h-full flex flex-col gap-1" style={{ zIndex: 10 }}>
             {testMeanings.map((meaning, idx) => (
               <button
                 key={idx}
                 onClick={() => handleMeaningClick(meaning)}
                 disabled={Object.values(testConnections).includes(meaning)}
-                className={`flex-1 py-2 px-3 rounded-xl text-base font-bold transition-all ${
+                className={`flex-1 py-1 px-2 rounded-lg text-sm font-bold transition-all ${
                   Object.values(testConnections).includes(meaning)
-                    ? 'bg-green-500 text-white shadow-lg'
-                    : 'bg-white/90 text-gray-800 active:scale-95 hover:bg-white'
+                    ? 'bg-green-500 text-white'
+                    : 'bg-white/90 text-gray-800 active:scale-95'
                 }`}
               >
                 {meaning}
