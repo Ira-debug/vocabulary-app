@@ -35,17 +35,17 @@ function UnitListPage() {
       {wrongWordsCount > 0 && (
         <div
           onClick={() => navigate(`/wrong-words/${bookId}`)}
-          className="bg-red-500 rounded-2xl shadow-lg p-4 mb-4 active:scale-98 transition-transform cursor-pointer"
+          className="bg-orange-100 rounded-2xl shadow-lg p-4 mb-4 active:scale-98 transition-transform cursor-pointer border-2 border-orange-300"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-3xl">❌</span>
+              <span className="text-3xl">📝</span>
               <div>
-                <h3 className="text-xl font-bold text-white">错词本</h3>
-                <p className="text-white/80 text-sm">{wrongWordsCount} 个单词需要复习</p>
+                <h3 className="text-lg font-bold text-orange-700">错词练习</h3>
+                <p className="text-orange-600 text-sm">{wrongWordsCount} 个单词需要复习</p>
               </div>
             </div>
-            <div className="text-white text-2xl">›</div>
+            <div className="text-orange-500 text-2xl">›</div>
           </div>
         </div>
       )}
