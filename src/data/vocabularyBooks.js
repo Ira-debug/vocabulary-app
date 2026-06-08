@@ -8,7 +8,7 @@ import { petStandard1Vocabulary } from './petStandard1Vocabulary.js';
 // PET青少版全真模拟题核心词汇表
 export const petVocabulary = {
   id: 'pet-teen',
-  name: 'PET青少版核心词汇',
+  name: 'PET青少版',
   description: 'PET青少版全真模拟题核心词汇',
   category: 'exam',
   color: '#f59e0b',
@@ -244,8 +244,8 @@ export const petVocabulary = {
 };
 
 export const vocabularyBooks = [
-  // 四年级下册
-  grade4Vocabulary,
+  // PET青少版（核心词汇）
+  petVocabulary,
   // PET青少版1
   petTeen1Vocabulary,
   // PET青少版2
@@ -254,8 +254,8 @@ export const vocabularyBooks = [
   petTeen3Vocabulary,
   // PET标准版1
   petStandard1Vocabulary,
-  // PET青少版核心词汇
-  petVocabulary
+  // 四年级下册英语
+  grade4Vocabulary,
 ];
 
 export default vocabularyBooks;
