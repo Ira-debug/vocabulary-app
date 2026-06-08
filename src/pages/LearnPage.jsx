@@ -576,12 +576,11 @@ function LearnPage() {
                       isMatched
                         ? 'bg-teal-100 text-teal-600 border-2 border-teal-400'
                         : isSelected
-                          ? 'bg-cyan-100 text-cyan-700 border-2 border-cyan-400 scale-105'
+                          ? 'bg-cyan-200 text-cyan-800 border-3 border-cyan-500 scale-110 shadow-lg'
                           : 'bg-teal-50 text-gray-700 hover:bg-teal-100 active:scale-98 border-2 border-teal-200'
                     } ${isMatched ? 'cursor-default' : 'cursor-pointer'}`}
                   >
                     {word.english}
-                    {isMatched && <span className="ml-1">✨</span>}
                   </button>
                 );
               })}
@@ -604,12 +603,11 @@ function LearnPage() {
                       isMatched
                         ? 'bg-blue-100 text-blue-600 border-2 border-blue-400'
                         : isSelected
-                          ? 'bg-indigo-100 text-indigo-700 border-2 border-indigo-400 scale-105'
+                          ? 'bg-indigo-200 text-indigo-800 border-3 border-indigo-500 scale-110 shadow-lg'
                           : 'bg-blue-50 text-gray-700 hover:bg-blue-100 active:scale-98 border-2 border-blue-200'
                     } ${isMatched ? 'cursor-default' : 'cursor-pointer'}`}
                   >
                     {meaning.chinese}
-                    {isMatched && <span className="ml-1">✨</span>}
                   </button>
                 );
               })}
