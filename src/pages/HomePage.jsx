@@ -45,6 +45,7 @@ function LearningCalendar() {
   for (let day = 1; day <= daysInMonth; day++) {
     const wordCount = monthData[day];
     const isToday = day === todayDay && month === todayMonth && year === todayYear;
+    const isFuture = (year > todayYear) || (year === todayYear && month > todayMonth) || (year === todayYear && month === todayMonth && day > todayDay);
 
     calendarDays.push(
       <div
@@ -52,9 +53,9 @@ function LearningCalendar() {
         className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs relative ${
           wordCount
             ? 'bg-green-400 text-white font-bold shadow-sm'
-            : isToday
-              ? 'bg-blue-100 text-blue-600 font-bold'
-              : 'bg-gray-100 text-gray-500'
+            : isFuture
+              ? 'bg-gray-200 text-gray-400'
+              : 'bg-red-400 text-white'
         }`}
       >
         {day}
