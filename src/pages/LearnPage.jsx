@@ -288,17 +288,6 @@ function LearnPage() {
       setMatchedPairs(prev => [...prev, { wordId: word.id, english: word.english, chinese: meaning.chinese }]);
       setSelectedWord(null);
       setSelectedMeaning(null);
-
-      // 检查本轮是否完成
-      if (matchedPairs.length + 1 === matchingWords.length) {
-        // 本轮完成，显示等待点击状态
-        setMatchingRoundComplete(true);
-
-        // 如果是最后一轮，播放表扬声音
-        if (matchingRound === 2 || remainingWords.length === 0) {
-          audioService.speakPraise('易小城');
-        }
-      }
     } else {
       // 匹配错误
       audioService.playWrong();
@@ -307,6 +296,19 @@ function LearnPage() {
       setSelectedMeaning(null);
     }
   };
+
+  // 监听匹配完成 - 使用 useEffect 确保状态更新后再检查
+  useEffect(() => {
+    if (phase === 'matching' && matchedPairs.length === matchingWords.length && matchingWords.length > 0) {
+      // 本轮完成
+      setMatchingRoundComplete(true);
+
+      // 如果是最后一轮，播放表扬声音
+      if (matchingRound === 2 || remainingWords.length === 0) {
+        audioService.speakPraise('易小城');
+      }
+    }
+  }, [matchedPairs, matchingWords, phase, matchingRound, remainingWords]);
 
   // 连连看本轮完成后，点击"下一个"按钮
   const handleMatchingNext = () => {
