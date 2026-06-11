@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../utils/supabase';
+import { useAuth } from './AuthContext';
 
 const ProgressContext = createContext(null);
 
@@ -9,6 +11,9 @@ const getTodayKey = () => {
 };
 
 export function ProgressProvider({ children }) {
+  const { user } = useAuth();
+
+  // 本地状态（作为缓存）
   const [progress, setProgress] = useState(() => {
     const saved = localStorage.getItem('vocabulary-progress');
     return saved ? JSON.parse(saved) : {};
@@ -19,27 +24,86 @@ export function ProgressProvider({ children }) {
     return saved ? JSON.parse(saved) : {};
   });
 
-  // 学习日历数据
   const [learningCalendar, setLearningCalendar] = useState(() => {
     const saved = localStorage.getItem('vocabulary-learning-calendar');
     return saved ? JSON.parse(saved) : {};
   });
 
-  // 保存进度到本地存储
+  // 用户登录后，从云端加载数据
   useEffect(() => {
-    localStorage.setItem('vocabulary-progress', JSON.stringify(progress));
-  }, [progress]);
+    if (user) {
+      loadFromCloud();
+    }
+  }, [user]);
 
-  useEffect(() => {
-    localStorage.setItem('vocabulary-wrong-words', JSON.stringify(wrongWords));
-  }, [wrongWords]);
+  // 从云端加载所有数据
+  const loadFromCloud = async () => {
+    if (!user) return;
 
-  useEffect(() => {
-    localStorage.setItem('vocabulary-learning-calendar', JSON.stringify(learningCalendar));
-  }, [learningCalendar]);
+    try {
+      // 加载学习进度
+      const { data: progressData } = await supabase
+        .from('learning_progress')
+        .select('*')
+        .eq('user_id', user.id);
+
+      if (progressData) {
+        const progressMap = {};
+        progressData.forEach(item => {
+          if (!progressMap[item.book_id]) {
+            progressMap[item.book_id] = { units: {} };
+          }
+          if (!progressMap[item.book_id].units[item.unit_id]) {
+            progressMap[item.book_id].units[item.unit_id] = { learnedWords: [] };
+          }
+          if (!progressMap[item.book_id].units[item.unit_id].learnedWords.includes(item.word_id)) {
+            progressMap[item.book_id].units[item.unit_id].learnedWords.push(item.word_id);
+          }
+        });
+        setProgress(progressMap);
+        localStorage.setItem('vocabulary-progress', JSON.stringify(progressMap));
+      }
+
+      // 加载错词
+      const { data: wrongData } = await supabase
+        .from('wrong_words')
+        .select('*')
+        .eq('user_id', user.id);
+
+      if (wrongData) {
+        const wrongMap = {};
+        wrongData.forEach(item => {
+          if (!wrongMap[item.book_id]) {
+            wrongMap[item.book_id] = [];
+          }
+          wrongMap[item.book_id].push(item.word_data);
+        });
+        setWrongWords(wrongMap);
+        localStorage.setItem('vocabulary-wrong-words', JSON.stringify(wrongMap));
+      }
+
+      // 加载学习日历
+      const { data: calendarData } = await supabase
+        .from('learning_calendar')
+        .select('*')
+        .eq('user_id', user.id);
+
+      if (calendarData) {
+        const calendarMap = {};
+        calendarData.forEach(item => {
+          calendarMap[item.date] = item.word_count;
+        });
+        setLearningCalendar(calendarMap);
+        localStorage.setItem('vocabulary-learning-calendar', JSON.stringify(calendarMap));
+      }
+    } catch (e) {
+      console.log('从云端加载失败:', e);
+    }
+  };
 
   // 更新单词学习进度
-  const updateProgress = (bookId, unitId, wordId) => {
+  const updateProgress = async (bookId, unitId, wordId) => {
+    // 更新本地状态
     setProgress(prev => {
       const newProgress = { ...prev };
       if (!newProgress[bookId]) {
@@ -54,8 +118,24 @@ export function ProgressProvider({ children }) {
           wordId
         ];
       }
+      localStorage.setItem('vocabulary-progress', JSON.stringify(newProgress));
       return newProgress;
     });
+
+    // 同步到云端
+    if (user) {
+      try {
+        await supabase.from('learning_progress').upsert({
+          user_id: user.id,
+          book_id: bookId,
+          unit_id: unitId,
+          word_id: wordId,
+          learned_at: new Date().toISOString()
+        }, { onConflict: 'user_id,book_id,unit_id,word_id' });
+      } catch (e) {
+        console.log('同步进度失败:', e);
+      }
+    }
 
     // 更新学习日历
     const todayKey = getTodayKey();
@@ -65,8 +145,23 @@ export function ProgressProvider({ children }) {
         newCalendar[todayKey] = 0;
       }
       newCalendar[todayKey] += 1;
+      localStorage.setItem('vocabulary-learning-calendar', JSON.stringify(newCalendar));
       return newCalendar;
     });
+
+    // 同步日历到云端
+    if (user) {
+      try {
+        const currentCount = learningCalendar[todayKey] || 0;
+        await supabase.from('learning_calendar').upsert({
+          user_id: user.id,
+          date: todayKey,
+          word_count: currentCount + 1
+        }, { onConflict: 'user_id,date' });
+      } catch (e) {
+        console.log('同步日历失败:', e);
+      }
+    }
   };
 
   // 获取某月的学习日历数据
@@ -86,7 +181,6 @@ export function ProgressProvider({ children }) {
 
   // 获取单词本进度
   const getBookProgress = (bookId, book) => {
-    // 先计算总单词数（无论是否有学习进度）
     let totalLearned = 0;
     let totalWords = 0;
 
@@ -116,7 +210,6 @@ export function ProgressProvider({ children }) {
 
   // 获取单元进度
   const getUnitProgress = (bookId, unitId, unit) => {
-    // 如果 unit 不存在，返回默认值
     if (!unit) {
       return { learnedWords: [], learned: 0, total: 0, percentage: 0 };
     }
@@ -136,7 +229,7 @@ export function ProgressProvider({ children }) {
   };
 
   // 添加错词
-  const addWrongWord = (bookId, word) => {
+  const addWrongWord = async (bookId, word) => {
     setWrongWords(prev => {
       const newWrongWords = { ...prev };
       if (!newWrongWords[bookId]) {
@@ -145,19 +238,23 @@ export function ProgressProvider({ children }) {
       if (!newWrongWords[bookId].find(w => w.id === word.id)) {
         newWrongWords[bookId] = [...newWrongWords[bookId], word];
       }
+      localStorage.setItem('vocabulary-wrong-words', JSON.stringify(newWrongWords));
       return newWrongWords;
     });
-  };
 
-  // 移除错词
-  const removeWrongWord = (bookId, wordId) => {
-    setWrongWords(prev => {
-      const newWrongWords = { ...prev };
-      if (newWrongWords[bookId]) {
-        newWrongWords[bookId] = newWrongWords[bookId].filter(w => w.id !== wordId);
+    // 同步到云端
+    if (user) {
+      try {
+        await supabase.from('wrong_words').upsert({
+          user_id: user.id,
+          book_id: bookId,
+          word_id: word.id,
+          word_data: word
+        }, { onConflict: 'user_id,book_id,word_id' });
+      } catch (e) {
+        console.log('同步错词失败:', e);
       }
-      return newWrongWords;
-    });
+    }
   };
 
   // 获取单词本的错词
@@ -166,12 +263,24 @@ export function ProgressProvider({ children }) {
   };
 
   // 重置进度
-  const resetProgress = (bookId) => {
+  const resetProgress = async (bookId) => {
     setProgress(prev => {
       const newProgress = { ...prev };
       delete newProgress[bookId];
+      localStorage.setItem('vocabulary-progress', JSON.stringify(newProgress));
       return newProgress;
     });
+
+    // 从云端删除
+    if (user) {
+      try {
+        await supabase.from('learning_progress').delete()
+          .eq('user_id', user.id)
+          .eq('book_id', bookId);
+      } catch (e) {
+        console.log('删除云端进度失败:', e);
+      }
+    }
   };
 
   return (
@@ -181,10 +290,10 @@ export function ProgressProvider({ children }) {
       getBookProgress,
       getUnitProgress,
       addWrongWord,
-      removeWrongWord,
       getWrongWords,
       resetProgress,
-      getMonthCalendar
+      getMonthCalendar,
+      loadFromCloud
     }}>
       {children}
     </ProgressContext.Provider>
@@ -194,7 +303,7 @@ export function ProgressProvider({ children }) {
 export function useProgress() {
   const context = useContext(ProgressContext);
   if (!context) {
-    throw new Error('useProgress must be used within a ProgressProvider');
+    throw new Error('useProgress must be used within ProgressProvider');
   }
   return context;
 }
