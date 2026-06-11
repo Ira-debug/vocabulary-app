@@ -300,17 +300,80 @@ function LearnPage() {
   // 监听匹配完成 - 使用 useEffect 确保状态更新后再检查
   useEffect(() => {
     if (phase === 'matching' && matchedPairs.length === matchingWords.length && matchingWords.length > 0) {
-      // 本轮完成
-      setMatchingRoundComplete(true);
+      // 本轮完成，自动进入下一环节
+      const hasNextRound = matchingRound === 1 && remainingWords.length > 0;
 
-      // 如果是最后一轮，播放表扬声音
-      if (matchingRound === 2 || remainingWords.length === 0) {
+      if (hasNextRound) {
+        // 如果是最后一轮，播放表扬声音后进入第二轮
+        setTimeout(() => {
+          handleMatchingNextRound();
+        }, 1000);
+      } else {
+        // 全部完成，播放表扬声音后进入下一组
         audioService.speakPraise('易小城');
+        setTimeout(() => {
+          handleMatchingComplete();
+        }, 2000);
       }
     }
   }, [matchedPairs, matchingWords, phase, matchingRound, remainingWords]);
 
-  // 连连看本轮完成后，点击"下一个"按钮
+  // 进入第二轮连连看
+  const handleMatchingNextRound = () => {
+    const nextWords = remainingWords;
+
+    // 获取干扰项
+    const otherWords = allWords.filter(w => !nextWords.find(s => s.id === w.id));
+    const distractorCount = Math.max(1, Math.floor(nextWords.length / 2));
+    const distractors = shuffle(otherWords).slice(0, distractorCount);
+
+    const allMeanings = shuffle([
+      ...nextWords.map(w => ({ chinese: w.chinese, wordId: w.id, isCorrect: true })),
+      ...distractors.map(w => ({ chinese: w.chinese, wordId: w.id, isCorrect: false }))
+    ]);
+
+    // 批量更新状态
+    setMatchingRound(2);
+    setMatchingWords(nextWords);
+    setMatchingOptions(allMeanings);
+    setMatchedPairs([]);
+    setSelectedWord(null);
+    setSelectedMeaning(null);
+    setRemainingWords([]);
+    setMatchingRoundComplete(false);
+  };
+
+  // 连连看全部完成，进入下一组学习
+  const handleMatchingComplete = () => {
+    // 保存进度
+    testResults.forEach(result => {
+      updateProgress(bookId, unitId, result.word.id);
+      if (result.wrongAttempts > 0) {
+        addWrongWord(bookId, result.word);
+      }
+    });
+    setAllResults(prev => [...prev, ...testResults]);
+
+    // 进入下一批或完成
+    const nextBatchStart = (batchIndex + 1) * BATCH_SIZE;
+    const nextBatch = allWords.slice(nextBatchStart, nextBatchStart + BATCH_SIZE);
+
+    if (nextBatch.length > 0) {
+      setBatchIndex(batchIndex + 1);
+      setCurrentBatch(nextBatch);
+      setCurrentIndex(0);
+      setPhase('learning');
+      setShowDetail(false);
+      setTestResults([]);
+      setMatchingRound(1);
+      setRemainingWords([]);
+      setMatchingRoundComplete(false);
+    } else {
+      setPhase('complete');
+    }
+  };
+
+  // 连连看本轮完成后，点击"下一个"按钮（保留但不再显示）
   const handleMatchingNext = () => {
     // 判断是否还有第二轮（使用当前状态判断）
     const hasNextRound = matchingRound === 1 && remainingWords.length > 0;
@@ -624,21 +687,12 @@ function LearnPage() {
             </div>
           </div>
 
-          {/* 提示或下一个按钮 */}
-          {matchingRoundComplete ? (
-            <div className="mt-6 flex justify-center">
-              <button
-                onClick={handleMatchingNext}
-                className="btn-kid px-8 py-3 rounded-full text-white font-medium"
-              >
-                下一个 ➡️
-              </button>
-            </div>
-          ) : (
-            <div className="text-center text-gray-500 mt-4 text-sm">
-              将单词与正确释义连线
-            </div>
-          )}
+          {/* 提示 */}
+          <div className="text-center text-gray-500 mt-4 text-sm">
+            {matchedPairs.length === matchingWords.length
+              ? '🎉 完成！即将进入下一环节...'
+              : '将单词与正确释义连线'}
+          </div>
         </div>
       </div>
     );
