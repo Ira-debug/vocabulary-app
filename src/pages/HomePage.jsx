@@ -48,20 +48,32 @@ function LearningCalendar() {
     const isToday = day === todayDay && month === todayMonth && year === todayYear;
     const isFuture = (year > todayYear) || (year === todayYear && month > todayMonth) || (year === todayYear && month === todayMonth && day > todayDay);
 
-    calendarDays.push(
-      <div
-        key={day}
-        className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs ${
-          wordCount
-            ? 'bg-green-400 text-white font-bold shadow-sm'
-            : isFuture
+    if (wordCount) {
+      // 有学习的日子：中间显示数量，右下角显示日期
+      calendarDays.push(
+        <div
+          key={day}
+          className={`w-8 h-10 rounded-lg flex flex-col items-center justify-center bg-green-400 text-white shadow-sm relative`}
+        >
+          <span className="text-base font-bold">{wordCount}</span>
+          <span className="text-xs absolute bottom-1 right-1">{day}</span>
+        </div>
+      );
+    } else {
+      // 没有学习的日子
+      calendarDays.push(
+        <div
+          key={day}
+          className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs ${
+            isFuture
               ? 'bg-gray-200 text-gray-400'
               : 'bg-red-400 text-white'
-        }`}
-      >
-        {day}
-      </div>
-    );
+          }`}
+        >
+          {day}
+        </div>
+      );
+    }
   }
 
   return (
