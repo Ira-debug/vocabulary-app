@@ -141,11 +141,7 @@ function LearnPage() {
   useEffect(() => {
     if (phase === 'learning' && currentBatch.length > 0 && currentBatch[currentIndex]) {
       const word = currentBatch[currentIndex];
-      // 增加延迟时间，特别是最后一个单词
-      const delay = currentIndex === currentBatch.length - 1 ? 300 : 500;
-      const timer = setTimeout(() => {
-        speakWord(word.english);
-      }, delay);
+      const timer = setTimeout(() => speakWord(word.english), 200);
       return () => clearTimeout(timer);
     }
   }, [currentIndex, currentBatch, phase]);
@@ -153,8 +149,7 @@ function LearnPage() {
   // 学完最后一个单词后自动进入测试
   useEffect(() => {
     if (phase === 'learning' && currentBatch.length > 0 && currentIndex === currentBatch.length - 1) {
-      // 延迟更长时间，确保最后一个单词发音完成
-      const timer = setTimeout(() => startTest(), 4000);
+      const timer = setTimeout(() => startTest(), 2000);
       return () => clearTimeout(timer);
     }
   }, [currentIndex, currentBatch, phase]);
