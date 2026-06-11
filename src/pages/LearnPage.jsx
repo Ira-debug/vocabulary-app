@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { vocabularyBooks } from '../data/vocabularyBooks';
 import audioService from '../utils/audioService';
 import { useProgress } from '../context/ProgressContext';
+import { useAuth } from '../context/AuthContext';
 
 // 洗牌函数
 const shuffle = (array) => {
@@ -43,6 +44,12 @@ function LearnPage() {
   const { bookId, unitId } = useParams();
   const navigate = useNavigate();
   const { getUnitProgress, updateProgress, addWrongWord } = useProgress();
+  const { user } = useAuth();
+
+  // 获取用户名
+  const getUsername = () => {
+    return user?.user_metadata?.username || '小朋友';
+  };
 
   // 批次管理
   const [batchIndex, setBatchIndex] = useState(0);
@@ -309,11 +316,11 @@ function LearnPage() {
           handleMatchingNextRound();
         }, 1000);
       } else {
-        // 全部完成，播放表扬声音后进入下一组
-        audioService.speakPraise('易小城');
+        // 全部完成，播放表扬声音（女声 + 掌声）后进入下一组
+        audioService.playPraiseWithApplause(getUsername());
         setTimeout(() => {
           handleMatchingComplete();
-        }, 2000);
+        }, 3000);
       }
     }
   }, [matchedPairs, matchingWords, phase, matchingRound, remainingWords]);

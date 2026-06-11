@@ -47,14 +47,19 @@ class AudioService {
     const utterance = new SpeechSynthesisUtterance(word);
     utterance.lang = lang;
     utterance.rate = 0.8;
-    utterance.pitch = 1;
+    utterance.pitch = 1.2; // 稍高一点的音调，更像女声
     utterance.volume = 1;
 
-    // 尝试获取英语语音
+    // 尝试获取女声语音
     const voices = window.speechSynthesis.getVoices();
-    const englishVoice = voices.find(v => v.lang.startsWith(lang.split('-')[0]));
-    if (englishVoice) {
-      utterance.voice = englishVoice;
+    // 优先选择女声
+    const femaleVoice = voices.find(v =>
+      v.lang.startsWith(lang.split('-')[0]) &&
+      (v.name.includes('Female') || v.name.includes('female') || v.name.includes('woman'))
+    );
+    const targetVoice = femaleVoice || voices.find(v => v.lang.startsWith(lang.split('-')[0]));
+    if (targetVoice) {
+      utterance.voice = targetVoice;
     }
 
     utterance.onend = () => resolve();
@@ -79,6 +84,7 @@ class AudioService {
         const utterance2 = new SpeechSynthesisUtterance(word);
         utterance2.lang = lang;
         utterance2.rate = 0.8;
+        utterance2.pitch = 1.2;
         utterance2.onend = () => resolve();
         utterance2.onerror = () => resolve();
         window.speechSynthesis.speak(utterance2);
@@ -96,11 +102,16 @@ class AudioService {
     const utterance = new SpeechSynthesisUtterance(word);
     utterance.lang = lang;
     utterance.rate = 0.8;
-    utterance.pitch = 1;
+    utterance.pitch = 1.2; // 稍高一点的音调，更像女声
     utterance.volume = 1;
 
     const voices = window.speechSynthesis.getVoices();
-    const targetVoice = voices.find(v => v.lang.startsWith(lang.split('-')[0]));
+    // 优先选择女声
+    const femaleVoice = voices.find(v =>
+      v.lang.startsWith(lang.split('-')[0]) &&
+      (v.name.includes('Female') || v.name.includes('female') || v.name.includes('woman'))
+    );
+    const targetVoice = femaleVoice || voices.find(v => v.lang.startsWith(lang.split('-')[0]));
     if (targetVoice) {
       utterance.voice = targetVoice;
     }
@@ -165,9 +176,35 @@ class AudioService {
   }
 
   // 播放表扬声音（连连看完成时）
-  speakPraise(name = '易小城') {
-    const text = `${name}，你真棒！`;
+  speakPraise(username = '小朋友') {
+    const text = `${username}，你真棒！`;
     return this.speakWord(text, 'zh-CN');
+  }
+
+  // 播放掌声音效
+  playApplause() {
+    try {
+      this.init();
+      if (this.audioContext && this.audioContext.state === 'running') {
+        // 模拟掌声：快速交替的短促音
+        for (let i = 0; i < 12; i++) {
+          setTimeout(() => {
+            this.playTone(800 + Math.random() * 400, 0.08, 'square');
+            this.playTone(600 + Math.random() * 300, 0.06, 'sawtooth');
+          }, i * 80);
+        }
+      }
+    } catch (e) {
+      console.log('playApplause error:', e);
+    }
+  }
+
+  // 播放表扬语音（女声 + 掌声）
+  async playPraiseWithApplause(username = '小朋友') {
+    // 先播放掌声
+    this.playApplause();
+    // 然后播放表扬语音
+    await this.speakPraise(username);
   }
 }
 
