@@ -16,7 +16,7 @@ function UnitListPage() {
   const wrongWordsCount = wrongWords.length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 p-4 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 p-4 pb-20 safe-top">
       {/* 头部 */}
       <div className="flex items-center gap-3 py-4">
         <button

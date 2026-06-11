@@ -106,7 +106,7 @@ function WrongWordsPage() {
 
   if (wrongWords.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-300 to-pink-400 p-4 flex flex-col items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-orange-300 to-pink-400 p-4 flex flex-col items-center justify-center safe-top">
         <div className="bg-white rounded-3xl shadow-2xl p-8 text-center">
           <h2 className="text-4xl mb-4">🎉</h2>
           <h3 className="text-2xl font-bold text-gray-800 mb-2">太棒了！</h3>
@@ -125,7 +125,7 @@ function WrongWordsPage() {
   // 练习完成页面
   if (mode === 'complete') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-yellow-400 via-orange-400 to-pink-400 p-4 flex flex-col items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-yellow-400 via-orange-400 to-pink-400 p-4 flex flex-col items-center justify-center safe-top">
         <div className="bg-white rounded-3xl shadow-2xl p-8 text-center">
           <h2 className="text-5xl mb-4 animate-bounce-soft">🏆</h2>
           <h3 className="text-2xl font-bold text-gray-800 mb-2">练习完成！</h3>
@@ -152,7 +152,7 @@ function WrongWordsPage() {
   // 练习模式
   if (mode === 'practice') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-400 via-emerald-400 to-teal-400 p-4 flex flex-col">
+      <div className="min-h-screen bg-gradient-to-br from-green-400 via-emerald-400 to-teal-400 p-4 flex flex-col safe-top">
         {/* 头部 */}
         <div className="flex items-center gap-3 py-4">
           <button
@@ -220,7 +220,7 @@ function WrongWordsPage() {
 
   // 浏览模式
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-300 to-pink-400 p-4 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-orange-300 to-pink-400 p-4 flex flex-col safe-top">
       {/* 头部 */}
       <div className="flex items-center gap-3 py-4">
         <button

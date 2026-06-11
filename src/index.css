@@ -38,7 +38,18 @@ body {
     padding-left: max(0px, env(safe-area-inset-left));
     padding-right: max(0px, env(safe-area-inset-right));
     padding-bottom: max(0px, env(safe-area-inset-bottom));
+    padding-top: max(0px, env(safe-area-inset-top));
   }
+}
+
+/* 安全区域顶部 padding 类 */
+.safe-top {
+  padding-top: max(12px, env(safe-area-inset-top));
+}
+
+/* 安全区域底部 padding 类 */
+.safe-bottom {
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
 }
 
 /* 自定义动画 */

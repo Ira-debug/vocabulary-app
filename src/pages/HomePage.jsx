@@ -113,7 +113,7 @@ function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 p-4 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 p-4 pb-20 safe-top">
       {/* 头部 */}
       <div className="flex justify-between items-center py-4">
         <div>

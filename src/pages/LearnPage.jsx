@@ -488,7 +488,7 @@ function LearnPage() {
   // 错误页面
   if (!book || !unit) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 p-4 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 p-4 flex items-center justify-center safe-top">
         <div className="bg-white rounded-2xl shadow-lg p-8 text-center max-w-sm">
           <h2 className="text-xl font-bold text-gray-800 mb-2">找不到该单词本或单元</h2>
           <p className="text-gray-500 mb-4">bookId: {bookId}, unitId: {unitId}</p>
@@ -503,7 +503,7 @@ function LearnPage() {
   // 加载状态
   if (currentBatch.length === 0 && phase !== 'already_complete') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 p-4 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 p-4 flex items-center justify-center safe-top">
         <p className="text-white">正在加载...</p>
       </div>
     );
@@ -515,7 +515,7 @@ function LearnPage() {
   if (phase === 'already_complete') {
     const unitProgress = getUnitProgress(bookId, unitId, unit);
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 p-4 pb-8">
+      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 p-4 pb-8 safe-top">
         <div className="flex justify-between items-center mb-4">
           <button onClick={handleBack} className="bg-white/20 text-white px-4 py-2 rounded-full active:scale-98 transition-transform">
             ← 返回
@@ -545,7 +545,7 @@ function LearnPage() {
     const wrongWords = finalResults.filter(r => r.wrongAttempts > 0).map(r => r.word);
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-yellow-400 via-orange-400 to-pink-400 p-4 pb-8">
+      <div className="min-h-screen bg-gradient-to-br from-yellow-400 via-orange-400 to-pink-400 p-4 pb-8 safe-top">
         <div className="flex justify-between items-center mb-4">
           <button onClick={handleBack} className="bg-white/20 text-white px-4 py-2 rounded-full active:scale-98 transition-transform">
             ← 返回
@@ -592,7 +592,7 @@ function LearnPage() {
     const completedCount = batchIndex * BATCH_SIZE + currentBatch.length;
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 p-4 pb-8">
+      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 p-4 pb-8 safe-top">
         <div className="flex justify-between items-center mb-4">
           <button onClick={handleBack} className="bg-white/20 text-white px-4 py-2 rounded-full active:scale-98 transition-transform">
             ← 返回
@@ -622,7 +622,7 @@ function LearnPage() {
     const totalMatching = currentBatch.length;
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-teal-400 via-cyan-400 to-blue-400 p-4 pb-8">
+      <div className="min-h-screen bg-gradient-to-br from-teal-400 via-cyan-400 to-blue-400 p-4 pb-8 safe-top">
         <div className="flex justify-between items-center mb-4">
           <button onClick={handleBack} className="bg-white/20 text-white px-4 py-2 rounded-full active:scale-98 transition-transform">
             ← 返回
@@ -721,7 +721,7 @@ function LearnPage() {
     };
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-400 via-emerald-400 to-teal-400 p-4 pb-8">
+      <div className="min-h-screen bg-gradient-to-br from-green-400 via-emerald-400 to-teal-400 p-4 pb-8 safe-top">
         <div className="flex justify-between items-center mb-4">
           <button onClick={handleBack} className="bg-white/20 text-white px-4 py-2 rounded-full active:scale-98 transition-transform">
             ← 返回
@@ -799,7 +799,7 @@ function LearnPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-400 via-purple-400 to-pink-400 p-4 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-400 via-purple-400 to-pink-400 p-4 flex flex-col safe-top">
       {/* 顶部导航 */}
       <div className="flex justify-between items-center mb-2">
         <button onClick={handleBack} className="bg-white/20 text-white px-4 py-2 rounded-full active:scale-98 transition-transform flex items-center gap-1">
