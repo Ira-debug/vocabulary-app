@@ -43,45 +43,50 @@ class AudioService {
     // 先取消之前的发音
     window.speechSynthesis.cancel();
 
-    // iOS 需要：先播放一个空的 utterance 来"唤醒" speechSynthesis
-    const wakeUp = new SpeechSynthesisUtterance('');
-    wakeUp.lang = lang;
-    window.speechSynthesis.speak(wakeUp);
+    // 创建 utterance
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = lang;
+    utterance.rate = 0.8;
+    utterance.pitch = 1;
+    utterance.volume = 1;
 
-    // 等待一小段时间后播放真正的内容
+    // 尝试获取英语语音
+    const voices = window.speechSynthesis.getVoices();
+    const englishVoice = voices.find(v => v.lang.startsWith(lang.split('-')[0]));
+    if (englishVoice) {
+      utterance.voice = englishVoice;
+    }
+
+    utterance.onend = () => resolve();
+    utterance.onerror = () => resolve();
+
+    // iOS Safari 多种方法尝试
+    // 方法1：直接播放
+    window.speechSynthesis.speak(utterance);
+
+    // 方法2：如果没有播放，尝试 pause/resume
     setTimeout(() => {
-      window.speechSynthesis.cancel();
-
-      const utterance = new SpeechSynthesisUtterance(word);
-      utterance.lang = lang;
-      utterance.rate = 0.8;
-      utterance.pitch = 1;
-      utterance.volume = 1;
-
-      // 尝试获取英语语音
-      const voices = window.speechSynthesis.getVoices();
-      const englishVoice = voices.find(v => v.lang.startsWith('en'));
-      if (englishVoice) {
-        utterance.voice = englishVoice;
+      if (!window.speechSynthesis.speaking) {
+        window.speechSynthesis.pause();
+        window.speechSynthesis.resume();
       }
-
-      utterance.onend = () => resolve();
-      utterance.onerror = () => resolve();
-
-      window.speechSynthesis.speak(utterance);
-
-      // iOS Safari hack：强制触发播放
-      // 通过暂停和恢复来确保播放
-      setTimeout(() => {
-        if (!window.speechSynthesis.speaking) {
-          window.speechSynthesis.pause();
-          window.speechSynthesis.resume();
-        }
-      }, 50);
-
-      // 超时保护
-      setTimeout(resolve, 5000);
     }, 100);
+
+    // 方法3：如果还是没有播放，重新触发
+    setTimeout(() => {
+      if (!window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        const utterance2 = new SpeechSynthesisUtterance(word);
+        utterance2.lang = lang;
+        utterance2.rate = 0.8;
+        utterance2.onend = () => resolve();
+        utterance2.onerror = () => resolve();
+        window.speechSynthesis.speak(utterance2);
+      }
+    }, 300);
+
+    // 超时保护
+    setTimeout(resolve, 6000);
   }
 
   // 其他浏览器播放方法
